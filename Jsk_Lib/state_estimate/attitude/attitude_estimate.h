@@ -19,8 +19,10 @@
 
 /* ros */
 #include <ros.h>
-#include <aerial_robot_msgs/Imu.h>
-#include <aerial_robot_base/DesireCoord.h>
+//#include <aerial_robot_msgs/Imu.h>
+//#include <aerial_robot_base/DesireCoord.h>
+#include <kduino/Imu.h>
+#include <kduino/DesireCoord.h>
 
 /* sensors */
 ////////////////////////////////////////
@@ -59,8 +61,10 @@ public:
     imu_pub_  = new ros::Publisher("imu", &imu_msg_);
     nh_->advertise(*imu_pub_);
 
-    desire_coord_sub_ = new ros::Subscriber2<aerial_robot_base::DesireCoord, AttitudeEstimate> ("/desire_coordinate", &AttitudeEstimate::desireCoordCallback, this );
-    nh_->subscribe<aerial_robot_base::DesireCoord, AttitudeEstimate>(*desire_coord_sub_);
+    //desire_coord_sub_ = new ros::Subscriber2<aerial_robot_base::DesireCoord, AttitudeEstimate> ("/desire_coordinate", &AttitudeEstimate::desireCoordCallback, this );
+    //nh_->subscribe<aerial_robot_base::DesireCoord, AttitudeEstimate>(*desire_coord_sub_);
+    desire_coord_sub_ = new ros::Subscriber2<kduino::DesireCoord, AttitudeEstimate> ("/desire_coordinate", &AttitudeEstimate::desireCoordCallback, this );
+    nh_->subscribe<kduino::DesireCoord, AttitudeEstimate>(*desire_coord_sub_);
 
     imu_ = imu;
 
@@ -130,8 +134,10 @@ public:
 //private:
   ros::NodeHandle* nh_;
   ros::Publisher* imu_pub_;
-  aerial_robot_msgs::Imu imu_msg_;
-  ros::Subscriber2<aerial_robot_base::DesireCoord, AttitudeEstimate>* desire_coord_sub_;
+  //aerial_robot_msgs::Imu imu_msg_;
+  //ros::Subscriber2<aerial_robot_base::DesireCoord, AttitudeEstimate>* desire_coord_sub_;
+  kduino::Imu imu_msg_;
+  ros::Subscriber2<kduino::DesireCoord, AttitudeEstimate>* desire_coord_sub_;
 
 
   EstimatorAlgorithm* estimator_;
@@ -139,7 +145,8 @@ public:
 
   uint32_t last_pub_time_;
 
-  void desireCoordCallback(const aerial_robot_base::DesireCoord& coord_msg)
+  //void desireCoordCallback(const aerial_robot_base::DesireCoord& coord_msg)
+  void desireCoordCallback(const kduino::DesireCoord& coord_msg)
   {
     estimator_->coordinateUpdate(coord_msg.roll, coord_msg.pitch);
   }
