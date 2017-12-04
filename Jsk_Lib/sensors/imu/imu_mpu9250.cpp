@@ -195,7 +195,7 @@ void IMU::gyroInit(void)
 	HAL_Delay(10); //very importnat! between gyro and acc
 
 	//calib in the first time
-	calibrate_gyro_ = 10 //CALIBRATING_STEP;
+	calibrate_gyro_ = 10; //CALIBRATING_STEP;
 	//calibrate_gyro_ = 0;
 
 	raw_gyro_p_.zero();
