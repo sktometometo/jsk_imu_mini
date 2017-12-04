@@ -52,7 +52,7 @@ public:
 
 	//for flash memory access
 	static const uint32_t FLASH_TIMEOUT_VALUE = 50000; /* 50 s */
-	static const uint32_t CALIB_DATA_ADDRESS =  0x08001000;//0x08018000; //32KB sector:  cortex m7
+	static const uint32_t CALIB_DATA_ADDRESS =  0x08010000;//0x08018000; //32KB sector:  cortex m7
 	//0x80xxxxxx is Bloc base addresse on AXIM interface(stmf7 manual P74)
 	// AXIM and TCIM share the same memory, but the addresses are different
 	//we don't need sector erase for the writing part here, please see L57 in attitude_estimate.c
@@ -62,7 +62,7 @@ public:
 	static const uint8_t CALIB_ACC_ADDRESS = 0;
 	static const uint8_t CALIB_MAG_ADDRESS = 12;
 	static const uint32_t CALIBRATING_STEP =  1000;
-	static const uint32_t CALIBRATING_MAG_STEP =  120000; //about 30s (0.01s * 3000; 0.001s * 30000)
+	static const uint32_t CALIBRATING_MAG_STEP =  1200; //about 30s (0.01s * 3000; 0.001s * 30000)
 
 	static const uint8_t GYRO_DLPF_CFG = 0x01;//0x04 //0: 250Hz, 0.97ms; 3: 41Hz, 5.9ms(kduino); 4: 20Hz: 9.9ms
 	static const uint8_t ACC_DLPF_CFG = 0x03; //0x03: 41Hz, 11.80ms

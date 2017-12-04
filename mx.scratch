@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project>
-<ProjectName>C:\Users\chen\Desktop\projects\jsk_imu_mini\\jsk_imu_mini</ProjectName>
+<ProjectName>C:\Users\haraduka\Documents\GitHub\mcu_projects\jsk_imu_mini\\jsk_imu_mini</ProjectName>
 <CMSIS>..\Drivers\CMSIS</CMSIS>
-<HAL_Driver>C:\Users\chen\STM32Cube\Repository\STM32Cube_FW_F4_V1.17.0\Drivers\CMSIS</HAL_Driver>
+<HAL_Driver>C:\Users\haraduka\STM32Cube\Repository\STM32Cube_FW_F4_V1.17.0\Drivers\CMSIS</HAL_Driver>
 
 <Toolchain>TrueSTUDIO</Toolchain>
 <Version>0</Version>
@@ -23,7 +23,7 @@
 <configs>
   <config>
     <name>jsk_imu_mini</name>				
-    <device>STM32F410C8Ux</device>		 
+    <device>STM32F410CBUx</device>		 
     <heapSize>0x200</heapSize>
     <stackSize>0x400</stackSize>
     
