@@ -69,6 +69,7 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN 0 */
 static int counter = 0;
+static int LEDcounter = 0;
 
 // attitude estimate and  control is at sys timer it callback
 // update interrupt
@@ -169,8 +170,13 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-	  if(start_process_flag_)
-		  HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+	  if(start_process_flag_){
+		  if(LEDcounter >= 10){
+			  HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+			  LEDcounter = 0;
+		  }
+		  LEDcounter++;
+	  }
 	  HAL_Delay(10);
 	  //uint8_t c[5]={1,2,3,4,5};
 
@@ -179,6 +185,7 @@ int main(void)
 		  HAL_ADC_PollForConversion(&hadc1, 1);
 		  ADC_value[i] = HAL_ADC_GetValue(&hadc1);
 	  }
+	  testnode->publish(ADC_value);
 	  HAL_ADC_Stop(&hadc1);
 
 		  //imu_.update();
