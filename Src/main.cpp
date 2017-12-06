@@ -160,6 +160,7 @@ int main(void)
 
   }
   /* USER CODE END 2 */
+  uint16_t ADC_value[4];
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -170,9 +171,15 @@ int main(void)
   /* USER CODE BEGIN 3 */
 	  if(start_process_flag_)
 		  HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-	  HAL_Delay(100);
-	  uint8_t c[5]={1,2,3,4,5};
-	 // if(counter==0)
+	  HAL_Delay(10);
+	  //uint8_t c[5]={1,2,3,4,5};
+
+	  HAL_ADC_Start(&hadc1);
+	  for(int i=0; i<4; i++){
+		  HAL_ADC_PollForConversion(&hadc1, 1);
+		  ADC_value[i] = HAL_ADC_GetValue(&hadc1);
+	  }
+	  HAL_ADC_Stop(&hadc1);
 
 		  //imu_.update();
 	 // HAL_IWDG_Refresh(&hiwdg);
