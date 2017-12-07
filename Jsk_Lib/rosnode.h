@@ -33,6 +33,7 @@ public:
 		//publish the msgs
 		//nh_->advertise(*radioflag_pub_);
 		//nh_->advertise(*odom_pub_);
+		nh_->advertise(*potentio_pub);
 		potentio_msg.potentio_length = 4;
 		potentio_msg.potentio = (uint16_t*)malloc(sizeof(uint16_t)*4);
 
@@ -43,7 +44,7 @@ public:
 		potentio_msg.stamp = nh_->now();
 		for(int i=0; i<4; i++)
 			potentio_msg.potentio[i] = arr[i];
-		nh_->advertise(*potentio_pub);
+		potentio_pub->publish(&potentio_msg);
 	}
 
 	~RosNode(){}

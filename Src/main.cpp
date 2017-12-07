@@ -177,7 +177,7 @@ int main(void)
 		  }
 		  LEDcounter++;
 	  }
-	  HAL_Delay(10);
+	  HAL_Delay(9);
 	  //uint8_t c[5]={1,2,3,4,5};
 
 	  HAL_ADC_Start(&hadc1);
