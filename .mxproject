@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/chen/Desktop/projects/jsk_imu_mini/Inc
+HeaderPath=C:/Users/haraduka/Documents/GitHub/mcu_projects/jsk_imu_mini/Inc
 HeaderFiles=gpio.h;adc.h;spi.h;usart.h;stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;dma.h;i2c.h;iwdg.h;
-SourcePath=C:/Users/chen/Desktop/projects/jsk_imu_mini/Src
+SourcePath=C:/Users/haraduka/Documents/GitHub/mcu_projects/jsk_imu_mini/Src
 SourceFiles=gpio.c;adc.c;spi.c;usart.c;stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;dma.c;i2c.c;iwdg.c;
 
 [PreviousLibFiles]

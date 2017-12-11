@@ -69,6 +69,7 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN 0 */
 static int counter = 0;
+static int LEDcounter = 0;
 
 // attitude estimate and  control is at sys timer it callback
 // update interrupt
@@ -160,6 +161,7 @@ int main(void)
 
   }
   /* USER CODE END 2 */
+  uint16_t ADC_value[4];
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -168,11 +170,23 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-	  if(start_process_flag_)
-		  HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-	  HAL_Delay(100);
-	  uint8_t c[5]={1,2,3,4,5};
-	 // if(counter==0)
+	  if(start_process_flag_){
+		  if(LEDcounter >= 10){
+			  HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+			  LEDcounter = 0;
+		  }
+		  LEDcounter++;
+	  }
+	  HAL_Delay(9);
+	  //uint8_t c[5]={1,2,3,4,5};
+
+	  HAL_ADC_Start(&hadc1);
+	  for(int i=0; i<4; i++){
+		  HAL_ADC_PollForConversion(&hadc1, 1);
+		  ADC_value[i] = HAL_ADC_GetValue(&hadc1);
+	  }
+	  testnode->publish(ADC_value);
+	  HAL_ADC_Stop(&hadc1);
 
 		  //imu_.update();
 	 // HAL_IWDG_Refresh(&hiwdg);
@@ -198,20 +212,21 @@ void SystemClock_Config(void)
 
     /**Initializes the CPU, AHB and APB busses clocks 
     */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = 16;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 100;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
-  RCC_OscInitStruct.PLL.PLLR = 2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
+   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
+   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+   RCC_OscInitStruct.PLL.PLLM = 4;
+   RCC_OscInitStruct.PLL.PLLN = 100;
+   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+   RCC_OscInitStruct.PLL.PLLQ = 4;
+   RCC_OscInitStruct.PLL.PLLR = 2;
+   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+   {
+     _Error_Handler(__FILE__, __LINE__);
+   }
+
 
     /**Initializes the CPU, AHB and APB busses clocks 
     */

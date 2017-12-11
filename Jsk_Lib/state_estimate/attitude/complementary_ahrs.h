@@ -14,8 +14,8 @@
 
 #include "state_estimate/attitude/estimator.h"
 
-#define GYR_CMPF_FACTOR 600
-#define GYR_CMPFM_FACTOR 250
+#define GYR_CMPF_FACTOR 60
+#define GYR_CMPFM_FACTOR 25
 #define INV_GYR_CMPF_FACTOR   (1.0f / (GYR_CMPF_FACTOR  + 1.0f))
 #define INV_GYR_CMPFM_FACTOR  (1.0f / (GYR_CMPFM_FACTOR + 1.0f))
 #define PRESCLAER_ACC 3 // if value=1, it means same rate with gyro, for genral attitude estimation
