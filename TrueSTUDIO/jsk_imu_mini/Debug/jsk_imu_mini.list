@@ -7,45 +7,45 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   1 .text         00008a1c  080001c8  080001c8  000101c8  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       00000c48  08008be4  08008be4  00018be4  2**2
+  2 .rodata       00000c60  08008be4  08008be4  00018be4  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .ARM.extab    00000108  0800982c  0800982c  0001982c  2**2
+  3 .ARM.extab    00000108  08009844  08009844  00019844  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .ARM          00000398  08009934  08009934  00019934  2**2
+  4 .ARM          00000398  0800994c  0800994c  0001994c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  5 .init_array   00000008  08009ccc  08009ccc  00019ccc  2**2
+  5 .init_array   00000008  08009ce4  08009ce4  00019ce4  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .fini_array   00000004  08009cd4  08009cd4  00019cd4  2**2
+  6 .fini_array   00000004  08009cec  08009cec  00019cec  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  7 .data         00000518  20000000  08009cd8  00020000  2**2
+  7 .data         00000518  20000000  08009cf0  00020000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  8 .bss          00003954  20000518  0800a1f0  00020518  2**2
+  8 .bss          00003954  20000518  0800a208  00020518  2**2
                   ALLOC
-  9 ._user_heap_stack 00000600  20003e6c  0800a1f0  00023e6c  2**0
+  9 ._user_heap_stack 00000600  20003e6c  0800a208  00023e6c  2**0
                   ALLOC
  10 .ARM.attributes 00000030  00000000  00000000  00020518  2**0
                   CONTENTS, READONLY
- 11 .debug_line   00009d7f  00000000  00000000  00020548  2**0
+ 11 .debug_line   00009d67  00000000  00000000  00020548  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_info   00035e54  00000000  00000000  0002a2c7  2**0
+ 12 .debug_info   00035e48  00000000  00000000  0002a2af  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_abbrev 0000570a  00000000  00000000  0006011b  2**0
+ 13 .debug_abbrev 0000570a  00000000  00000000  000600f7  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_aranges 00000fe8  00000000  00000000  00065828  2**3
+ 14 .debug_aranges 00000fe8  00000000  00000000  00065808  2**3
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 000017f0  00000000  00000000  00066810  2**3
+ 15 .debug_ranges 000017f0  00000000  00000000  000667f0  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_loc    00009145  00000000  00000000  00068000  2**0
+ 16 .debug_loc    00009145  00000000  00000000  00067fe0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_str    0000fef8  00000000  00000000  00071145  2**0
+ 17 .debug_str    0000ff5d  00000000  00000000  00071125  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .comment      000000fa  00000000  00000000  0008103d  2**0
+ 18 .comment      000000fa  00000000  00000000  00081082  2**0
                   CONTENTS, READONLY
- 19 .debug_frame  000045b4  00000000  00000000  00081138  2**2
+ 19 .debug_frame  000045b4  00000000  00000000  0008117c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 20 .stab         0000003c  00000000  00000000  000856ec  2**2
+ 20 .stab         0000003c  00000000  00000000  00085730  2**2
                   CONTENTS, READONLY, DEBUGGING
- 21 .stabstr      00000076  00000000  00000000  00085728  2**0
+ 21 .stabstr      00000076  00000000  00000000  0008576c  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -507,8 +507,8 @@ Disassembly of section .text:
  8000664:	2309      	moveq	r3, #9
  8000666:	e7dc      	b.n	8000622 <get_eit_entry+0x4e>
  8000668:	00000000 	.word	0x00000000
- 800066c:	08009ccc 	.word	0x08009ccc
- 8000670:	08009934 	.word	0x08009934
+ 800066c:	08009ce4 	.word	0x08009ce4
+ 8000670:	0800994c 	.word	0x0800994c
 
 08000674 <restore_non_core_regs>:
  8000674:	6803      	ldr	r3, [r0, #0]
@@ -2081,7 +2081,7 @@ LoopFillZerobss:
   ldr   sp, =_estack       /* set stack pointer */
  800146c:	20008000 	.word	0x20008000
   ldr  r3, =_sidata
- 8001470:	08009cd8 	.word	0x08009cd8
+ 8001470:	08009cf0 	.word	0x08009cf0
   ldr  r0, =_sdata
  8001474:	20000000 	.word	0x20000000
   ldr  r3, =_edata
@@ -2584,13 +2584,13 @@ void MX_GPIO_Init(void)
     const char * getType(){ return "std_msgs/Time"; };
  80016c8:	4800      	ldr	r0, [pc, #0]	; (80016cc <_ZN8std_msgs4Time7getTypeEv+0x4>)
  80016ca:	4770      	bx	lr
- 80016cc:	080091e3 	.word	0x080091e3
+ 80016cc:	080091fa 	.word	0x080091fa
 
 080016d0 <_ZN8std_msgs4Time6getMD5Ev>:
     const char * getMD5(){ return "cd7166c74c552c311fbcc2fe5a7bc289"; };
  80016d0:	4800      	ldr	r0, [pc, #0]	; (80016d4 <_ZN8std_msgs4Time6getMD5Ev+0x4>)
  80016d2:	4770      	bx	lr
- 80016d4:	080091c2 	.word	0x080091c2
+ 80016d4:	080091d9 	.word	0x080091d9
 
 080016d8 <_ZN14rosserial_msgs9TopicInfo11deserializeEPh>:
       *(outbuffer + offset + 3) = (u_buffer_size.base >> (8 * 3)) & 0xFF;
@@ -2721,13 +2721,13 @@ void MX_GPIO_Init(void)
     const char * getType(){ return "rosserial_msgs/TopicInfo"; };
  8001770:	4800      	ldr	r0, [pc, #0]	; (8001774 <_ZN14rosserial_msgs9TopicInfo7getTypeEv+0x4>)
  8001772:	4770      	bx	lr
- 8001774:	0800903e 	.word	0x0800903e
+ 8001774:	0800904a 	.word	0x0800904a
 
 08001778 <_ZN14rosserial_msgs9TopicInfo6getMD5Ev>:
     const char * getMD5(){ return "0ad51f88fc44892f8c10684077646005"; };
  8001778:	4800      	ldr	r0, [pc, #0]	; (800177c <_ZN14rosserial_msgs9TopicInfo6getMD5Ev+0x4>)
  800177a:	4770      	bx	lr
- 800177c:	0800901d 	.word	0x0800901d
+ 800177c:	08009029 	.word	0x08009029
 
 08001780 <_ZN14rosserial_msgs3Log11deserializeEPh>:
       memcpy(outbuffer + offset, this->msg, length_msg);
@@ -2778,13 +2778,13 @@ void MX_GPIO_Init(void)
     const char * getType(){ return "rosserial_msgs/Log"; };
  80017ac:	4800      	ldr	r0, [pc, #0]	; (80017b0 <_ZN14rosserial_msgs3Log7getTypeEv+0x4>)
  80017ae:	4770      	bx	lr
- 80017b0:	0800900a 	.word	0x0800900a
+ 80017b0:	08009016 	.word	0x08009016
 
 080017b4 <_ZN14rosserial_msgs3Log6getMD5Ev>:
     const char * getMD5(){ return "11abd731c25933261cd6183bd12d6295"; };
  80017b4:	4800      	ldr	r0, [pc, #0]	; (80017b8 <_ZN14rosserial_msgs3Log6getMD5Ev+0x4>)
  80017b6:	4770      	bx	lr
- 80017b8:	08008fe9 	.word	0x08008fe9
+ 80017b8:	08008ff5 	.word	0x08008ff5
 
 080017bc <_ZN14rosserial_msgs20RequestParamResponse7getTypeEv>:
         memcpy( &(this->strings[i]), &(this->st_strings), sizeof(char*));
@@ -2801,9 +2801,9 @@ void MX_GPIO_Init(void)
     const char * getMD5(){ return "9f0e98bda65981986ddf53afa7a40e49"; };
  80017c4:	4800      	ldr	r0, [pc, #0]	; (80017c8 <_ZN14rosserial_msgs20RequestParamResponse6getMD5Ev+0x4>)
  80017c6:	4770      	bx	lr
- 80017c8:	08008fc8 	.word	0x08008fc8
+ 80017c8:	08008fd4 	.word	0x08008fd4
 
-080017cc <_ZNK6kduino8Potentio9serializeEPh>:
+080017cc <_ZNK17jsk_imu_mini_msgs8Potentio9serializeEPh>:
     }
 
     virtual int serialize(unsigned char *outbuffer) const
@@ -2860,7 +2860,7 @@ void MX_GPIO_Init(void)
  800180a:	42b3      	cmp	r3, r6
  800180c:	eba4 0001 	sub.w	r0, r4, r1
  8001810:	f104 0402 	add.w	r4, r4, #2
- 8001814:	da0c      	bge.n	8001830 <_ZNK6kduino8Potentio9serializeEPh+0x64>
+ 8001814:	da0c      	bge.n	8001830 <_ZNK17jsk_imu_mini_msgs8Potentio9serializeEPh+0x64>
       *(outbuffer + offset + 0) = (this->potentio[i] >> (8 * 0)) & 0xFF;
  8001816:	6910      	ldr	r0, [r2, #16]
  8001818:	f830 0013 	ldrh.w	r0, [r0, r3, lsl #1]
@@ -2872,7 +2872,7 @@ void MX_GPIO_Init(void)
  8001828:	f804 3c01 	strb.w	r3, [r4, #-1]
       for( uint8_t i = 0; i < potentio_length; i++){
  800182c:	462b      	mov	r3, r5
- 800182e:	e7e9      	b.n	8001804 <_ZNK6kduino8Potentio9serializeEPh+0x38>
+ 800182e:	e7e9      	b.n	8001804 <_ZNK17jsk_imu_mini_msgs8Potentio9serializeEPh+0x38>
       offset += sizeof(this->potentio[i]);
       }
       return offset;
@@ -2880,22 +2880,22 @@ void MX_GPIO_Init(void)
  8001830:	bd70      	pop	{r4, r5, r6, pc}
 	...
 
-08001834 <_ZN6kduino8Potentio7getTypeEv>:
+08001834 <_ZN17jsk_imu_mini_msgs8Potentio7getTypeEv>:
         memcpy( &(this->potentio[i]), &(this->st_potentio), sizeof(uint16_t));
       }
      return offset;
     }
 
-    const char * getType(){ return "kduino/Potentio"; };
- 8001834:	4800      	ldr	r0, [pc, #0]	; (8001838 <_ZN6kduino8Potentio7getTypeEv+0x4>)
+    const char * getType(){ return "jsk_imu_mini_msgs/Potentio"; };
+ 8001834:	4800      	ldr	r0, [pc, #0]	; (8001838 <_ZN17jsk_imu_mini_msgs8Potentio7getTypeEv+0x4>)
  8001836:	4770      	bx	lr
- 8001838:	080091b2 	.word	0x080091b2
+ 8001838:	08009185 	.word	0x08009185
 
-0800183c <_ZN6kduino8Potentio6getMD5Ev>:
+0800183c <_ZN17jsk_imu_mini_msgs8Potentio6getMD5Ev>:
     const char * getMD5(){ return "3c38bfc62efc8af1fef221b81830300a"; };
- 800183c:	4800      	ldr	r0, [pc, #0]	; (8001840 <_ZN6kduino8Potentio6getMD5Ev+0x4>)
+ 800183c:	4800      	ldr	r0, [pc, #0]	; (8001840 <_ZN17jsk_imu_mini_msgs8Potentio6getMD5Ev+0x4>)
  800183e:	4770      	bx	lr
- 8001840:	08009191 	.word	0x08009191
+ 8001840:	08009164 	.word	0x08009164
 
 08001844 <_ZNK17jsk_imu_mini_msgs3Imu9serializeEPh>:
     }
@@ -3237,13 +3237,13 @@ void MX_GPIO_Init(void)
     const char * getType(){ return "jsk_imu_mini_msgs/Imu"; };
  8001a38:	4800      	ldr	r0, [pc, #0]	; (8001a3c <_ZN17jsk_imu_mini_msgs3Imu7getTypeEv+0x4>)
  8001a3a:	4770      	bx	lr
- 8001a3c:	08009142 	.word	0x08009142
+ 8001a3c:	0800914e 	.word	0x0800914e
 
 08001a40 <_ZN17jsk_imu_mini_msgs3Imu6getMD5Ev>:
     const char * getMD5(){ return "68b769ca85e5d9c44dbce51dc60e4be7"; };
  8001a40:	4800      	ldr	r0, [pc, #0]	; (8001a44 <_ZN17jsk_imu_mini_msgs3Imu6getMD5Ev+0x4>)
  8001a42:	4770      	bx	lr
- 8001a44:	08009121 	.word	0x08009121
+ 8001a44:	0800912d 	.word	0x0800912d
 
 08001a48 <_ZNK17jsk_imu_mini_msgs11DesireCoord9serializeEPh>:
       union {
@@ -3353,13 +3353,13 @@ void MX_GPIO_Init(void)
     const char * getType(){ return "jsk_imu_mini_msgs/DesireCoord"; };
  8001a94:	4800      	ldr	r0, [pc, #0]	; (8001a98 <_ZN17jsk_imu_mini_msgs11DesireCoord7getTypeEv+0x4>)
  8001a96:	4770      	bx	lr
- 8001a98:	08009103 	.word	0x08009103
+ 8001a98:	0800910f 	.word	0x0800910f
 
 08001a9c <_ZN17jsk_imu_mini_msgs11DesireCoord6getMD5Ev>:
     const char * getMD5(){ return "6ccf1a68453182818d4a1d0d5013bd0d"; };
  8001a9c:	4800      	ldr	r0, [pc, #0]	; (8001aa0 <_ZN17jsk_imu_mini_msgs11DesireCoord6getMD5Ev+0x4>)
  8001a9e:	4770      	bx	lr
- 8001aa0:	080090e2 	.word	0x080090e2
+ 8001aa0:	080090ee 	.word	0x080090ee
 
 08001aa4 <_ZNK17aerial_robot_msgs9Barometer9serializeEPh>:
     }
@@ -3528,13 +3528,13 @@ void MX_GPIO_Init(void)
     const char * getType(){ return "aerial_robot_msgs/Barometer"; };
  8001b44:	4800      	ldr	r0, [pc, #0]	; (8001b48 <_ZN17aerial_robot_msgs9Barometer7getTypeEv+0x4>)
  8001b46:	4770      	bx	lr
- 8001b48:	080090c6 	.word	0x080090c6
+ 8001b48:	080090d2 	.word	0x080090d2
 
 08001b4c <_ZN17aerial_robot_msgs9Barometer6getMD5Ev>:
     const char * getMD5(){ return "b732c389660333d48fe976feb5768402"; };
  8001b4c:	4800      	ldr	r0, [pc, #0]	; (8001b50 <_ZN17aerial_robot_msgs9Barometer6getMD5Ev+0x4>)
  8001b4e:	4770      	bx	lr
- 8001b50:	080090a5 	.word	0x080090a5
+ 8001b50:	080090b1 	.word	0x080090b1
 
 08001b54 <_ZNK17aerial_robot_msgs3Gps9serializeEPh>:
     }
@@ -3772,13 +3772,13 @@ void MX_GPIO_Init(void)
     const char * getType(){ return "aerial_robot_msgs/Gps"; };
  8001c78:	4800      	ldr	r0, [pc, #0]	; (8001c7c <_ZN17aerial_robot_msgs3Gps7getTypeEv+0x4>)
  8001c7a:	4770      	bx	lr
- 8001c7c:	0800908f 	.word	0x0800908f
+ 8001c7c:	0800909b 	.word	0x0800909b
 
 08001c80 <_ZN17aerial_robot_msgs3Gps6getMD5Ev>:
     const char * getMD5(){ return "b9b55701ff5240f76ada29af2827853c"; };
  8001c80:	4800      	ldr	r0, [pc, #0]	; (8001c84 <_ZN17aerial_robot_msgs3Gps6getMD5Ev+0x4>)
  8001c82:	4770      	bx	lr
- 8001c84:	0800906e 	.word	0x0800906e
+ 8001c84:	0800907a 	.word	0x0800907a
 
 08001c88 <_ZN13StateEstimateD1Ev>:
 {
@@ -4065,13 +4065,13 @@ for(int i = 0; i < RX_BURST_SIZE; i++)
       virtual const char * getMsgType(){ return this->msg.getType(); }
  8001e5c:	4800      	ldr	r0, [pc, #0]	; (8001e60 <_ZN3ros11Subscriber2IN17jsk_imu_mini_msgs11DesireCoordE16AttitudeEstimateE10getMsgTypeEv+0x4>)
  8001e5e:	4770      	bx	lr
- 8001e60:	08009103 	.word	0x08009103
+ 8001e60:	0800910f 	.word	0x0800910f
 
 08001e64 <_ZN3ros11Subscriber2IN17jsk_imu_mini_msgs11DesireCoordE16AttitudeEstimateE9getMsgMD5Ev>:
       virtual const char * getMsgMD5(){ return this->msg.getMD5(); }
  8001e64:	4800      	ldr	r0, [pc, #0]	; (8001e68 <_ZN3ros11Subscriber2IN17jsk_imu_mini_msgs11DesireCoordE16AttitudeEstimateE9getMsgMD5Ev+0x4>)
  8001e66:	4770      	bx	lr
- 8001e68:	080090e2 	.word	0x080090e2
+ 8001e68:	080090ee 	.word	0x080090ee
 
 08001e6c <_ZN3ros11Subscriber2IN17jsk_imu_mini_msgs11DesireCoordE16AttitudeEstimateE8callbackEPh>:
       virtual void callback(unsigned char* data){
@@ -4506,7 +4506,7 @@ for(int i = 0; i < RX_BURST_SIZE; i++)
     }
  800210a:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
 
-0800210c <_ZN6kduino8Potentio11deserializeEPh>:
+0800210c <_ZN17jsk_imu_mini_msgs8Potentio11deserializeEPh>:
     virtual int deserialize(unsigned char *inbuffer)
  800210c:	b570      	push	{r4, r5, r6, lr}
       this->stamp.sec =  ((uint32_t) (*(inbuffer + offset)));
@@ -4548,7 +4548,7 @@ for(int i = 0; i < RX_BURST_SIZE; i++)
  800214c:	4604      	mov	r4, r0
  800214e:	460d      	mov	r5, r1
       if(potentio_lengthT > potentio_length)
- 8002150:	dd04      	ble.n	800215c <_ZN6kduino8Potentio11deserializeEPh+0x50>
+ 8002150:	dd04      	ble.n	800215c <_ZN17jsk_imu_mini_msgs8Potentio11deserializeEPh+0x50>
         this->potentio = (uint16_t*)realloc(this->potentio, potentio_lengthT * sizeof(uint16_t));
  8002152:	0071      	lsls	r1, r6, #1
  8002154:	6900      	ldr	r0, [r0, #16]
@@ -4565,7 +4565,7 @@ for(int i = 0; i < RX_BURST_SIZE; i++)
  800216a:	4293      	cmp	r3, r2
  800216c:	eba1 0005 	sub.w	r0, r1, r5
  8002170:	f101 0102 	add.w	r1, r1, #2
- 8002174:	da0c      	bge.n	8002190 <_ZN6kduino8Potentio11deserializeEPh+0x84>
+ 8002174:	da0c      	bge.n	8002190 <_ZN17jsk_imu_mini_msgs8Potentio11deserializeEPh+0x84>
       this->st_potentio =  ((uint16_t) (*(inbuffer + offset)));
  8002176:	f811 2c02 	ldrb.w	r2, [r1, #-2]
  800217a:	81e2      	strh	r2, [r4, #14]
@@ -4580,7 +4580,7 @@ for(int i = 0; i < RX_BURST_SIZE; i++)
  8002188:	f820 2013 	strh.w	r2, [r0, r3, lsl #1]
       for( uint8_t i = 0; i < potentio_length; i++){
  800218c:	4633      	mov	r3, r6
- 800218e:	e7e9      	b.n	8002164 <_ZN6kduino8Potentio11deserializeEPh+0x58>
+ 800218e:	e7e9      	b.n	8002164 <_ZN17jsk_imu_mini_msgs8Potentio11deserializeEPh+0x58>
     }
  8002190:	bd70      	pop	{r4, r5, r6, pc}
 	...
@@ -5120,12 +5120,12 @@ public:
  800258a:	2b14      	cmp	r3, #20
  800258c:	d19c      	bne.n	80024c8 <_ZN16AttitudeEstimate4initEP3IMUPN3ros11NodeHandle_I13STMF4HardwareLi20ELi20ELi255ELi255EEE+0x6c>
  800258e:	e7a5      	b.n	80024dc <_ZN16AttitudeEstimate4initEP3IMUPN3ros11NodeHandle_I13STMF4HardwareLi20ELi20ELi255ELi255EEE+0x80>
- 8002590:	08009057 	.word	0x08009057
+ 8002590:	08009063 	.word	0x08009063
  8002594:	0800240d 	.word	0x0800240d
- 8002598:	08008f88 	.word	0x08008f88
- 800259c:	0800905b 	.word	0x0800905b
- 80025a0:	08008f64 	.word	0x08008f64
- 80025a4:	08008f7c 	.word	0x08008f7c
+ 8002598:	08008f94 	.word	0x08008f94
+ 800259c:	08009067 	.word	0x08009067
+ 80025a0:	08008f70 	.word	0x08008f70
+ 80025a4:	08008f88 	.word	0x08008f88
 
 080025a8 <_ZN13StateEstimateC1Ev>:
   StateEstimate()
@@ -5176,9 +5176,9 @@ public:
   }
  8002600:	bd10      	pop	{r4, pc}
  8002602:	bf00      	nop
- 8002604:	08008f4c 	.word	0x08008f4c
- 8002608:	08008fa0 	.word	0x08008fa0
- 800260c:	08008fb8 	.word	0x08008fb8
+ 8002604:	08008f58 	.word	0x08008f58
+ 8002608:	08008fac 	.word	0x08008fac
+ 800260c:	08008fc4 	.word	0x08008fc4
 
 08002610 <_Z18SystemClock_Configv>:
 }
@@ -5731,8 +5731,8 @@ public:
  8002962:	e7f4      	b.n	800294e <main+0x17a>
  8002964:	20003ca8 	.word	0x20003ca8
  8002968:	20000534 	.word	0x20000534
- 800296c:	08008f20 	.word	0x08008f20
- 8002970:	080091f1 	.word	0x080091f1
+ 800296c:	08008f2c 	.word	0x08008f2c
+ 8002970:	08009208 	.word	0x08009208
  8002974:	20000844 	.word	0x20000844
  8002978:	20003b90 	.word	0x20003b90
  800297c:	20000a2c 	.word	0x20000a2c
@@ -6417,8 +6417,8 @@ public:
         return -1;
  8002e62:	f04f 35ff 	mov.w	r5, #4294967295	; 0xffffffff
  8002e66:	e7ec      	b.n	8002e42 <_ZN3ros11NodeHandle_I13STMF4HardwareLi20ELi20ELi255ELi255EE7publishEiPKNS_3MsgE+0x8a>
- 8002e68:	08008ef0 	.word	0x08008ef0
- 8002e6c:	08009158 	.word	0x08009158
+ 8002e68:	08008efc 	.word	0x08008efc
+ 8002e6c:	080091a0 	.word	0x080091a0
 
 08002e70 <_ZN3ros11NodeHandle_I13STMF4HardwareLi20ELi20ELi255ELi255EE15requestSyncTimeEv>:
     void requestSyncTime()
@@ -6446,7 +6446,7 @@ public:
  8002e8e:	b004      	add	sp, #16
  8002e90:	bd10      	pop	{r4, pc}
  8002e92:	bf00      	nop
- 8002e94:	08008ec0 	.word	0x08008ec0
+ 8002e94:	08008ecc 	.word	0x08008ecc
 
 08002e98 <_ZN3ros11NodeHandle_I13STMF4HardwareLi20ELi20ELi255ELi255EE15negotiateTopicsEv>:
     void negotiateTopics()
@@ -6559,8 +6559,8 @@ public:
     }
  8002f42:	b006      	add	sp, #24
  8002f44:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
- 8002f48:	08008ed8 	.word	0x08008ed8
- 8002f4c:	08009190 	.word	0x08009190
+ 8002f48:	08008ee4 	.word	0x08008ee4
+ 8002f4c:	080091d8 	.word	0x080091d8
 
 08002f50 <_ZN3ros11NodeHandle_I13STMF4HardwareLi20ELi20ELi255ELi255EE8syncTimeEPh>:
     void syncTime(uint8_t * data)
@@ -6618,7 +6618,7 @@ public:
     }
  8002fc0:	b004      	add	sp, #16
  8002fc2:	bd70      	pop	{r4, r5, r6, pc}
- 8002fc4:	08008ec0 	.word	0x08008ec0
+ 8002fc4:	08008ecc 	.word	0x08008ecc
  8002fc8:	000f4240 	.word	0x000f4240
  8002fcc:	3b9aca00 	.word	0x3b9aca00
 
@@ -7111,8 +7111,8 @@ StateEstimate estimator_;
  80033be:	f003 ba6c 	b.w	800689a <__aeabi_atexit>
  80033c2:	bf00      	nop
  80033c4:	20000534 	.word	0x20000534
- 80033c8:	08008f38 	.word	0x08008f38
- 80033cc:	08008f08 	.word	0x08008f08
+ 80033c8:	08008f44 	.word	0x08008f44
+ 80033cc:	08008f14 	.word	0x08008f14
  80033d0:	000eaab0 	.word	0x000eaab0
  80033d4:	20000934 	.word	0x20000934
  80033d8:	0800242d 	.word	0x0800242d
@@ -7183,7 +7183,7 @@ void MX_SPI1_Init(void)
  8003422:	bd08      	pop	{r3, pc}
  8003424:	20003b90 	.word	0x20003b90
  8003428:	40013000 	.word	0x40013000
- 800342c:	080091fe 	.word	0x080091fe
+ 800342c:	08009215 	.word	0x08009215
 
 08003430 <HAL_SPI_MspInit>:
 
@@ -7505,7 +7505,7 @@ void MX_USART1_UART_Init(void)
  800356e:	bf00      	nop
  8003570:	20003ca8 	.word	0x20003ca8
  8003574:	40011000 	.word	0x40011000
- 8003578:	08009211 	.word	0x08009211
+ 8003578:	08009228 	.word	0x08009228
 
 0800357c <HAL_UART_MspInit>:
 
@@ -7705,7 +7705,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
  8003660:	40020000 	.word	0x40020000
  8003664:	20003be8 	.word	0x20003be8
  8003668:	40026440 	.word	0x40026440
- 800366c:	08009211 	.word	0x08009211
+ 800366c:	08009228 	.word	0x08009228
  8003670:	20003c48 	.word	0x20003c48
  8003674:	400264b8 	.word	0x400264b8
 
@@ -7743,13 +7743,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     const char * getType(){ return "std_msgs/UInt8"; };
  8003688:	4800      	ldr	r0, [pc, #0]	; (800368c <_ZN8std_msgs5UInt87getTypeEv+0x4>)
  800368a:	4770      	bx	lr
- 800368c:	080092cd 	.word	0x080092cd
+ 800368c:	080092e5 	.word	0x080092e5
 
 08003690 <_ZN8std_msgs5UInt86getMD5Ev>:
     const char * getMD5(){ return "7c8164229e7d2c17eb95e9231617fdee"; };
  8003690:	4800      	ldr	r0, [pc, #0]	; (8003694 <_ZN8std_msgs5UInt86getMD5Ev+0x4>)
  8003692:	4770      	bx	lr
- 8003694:	080092ac 	.word	0x080092ac
+ 8003694:	080092c4 	.word	0x080092c4
 
 08003698 <_ZN3ros11Subscriber2IN8std_msgs5UInt8E3IMUE15getEndpointTypeEv>:
       virtual int getEndpointType(){ return endpoint_; }
@@ -7760,13 +7760,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
       virtual const char * getMsgType(){ return this->msg.getType(); }
  800369c:	4800      	ldr	r0, [pc, #0]	; (80036a0 <_ZN3ros11Subscriber2IN8std_msgs5UInt8E3IMUE10getMsgTypeEv+0x4>)
  800369e:	4770      	bx	lr
- 80036a0:	080092cd 	.word	0x080092cd
+ 80036a0:	080092e5 	.word	0x080092e5
 
 080036a4 <_ZN3ros11Subscriber2IN8std_msgs5UInt8E3IMUE9getMsgMD5Ev>:
       virtual const char * getMsgMD5(){ return this->msg.getMD5(); }
  80036a4:	4800      	ldr	r0, [pc, #0]	; (80036a8 <_ZN3ros11Subscriber2IN8std_msgs5UInt8E3IMUE9getMsgMD5Ev+0x4>)
  80036a6:	4770      	bx	lr
- 80036a8:	080092ac 	.word	0x080092ac
+ 80036a8:	080092c4 	.word	0x080092c4
 
 080036ac <_ZN3ros11Subscriber2IN8std_msgs5UInt8E3IMUE8callbackEPh>:
       virtual void callback(unsigned char* data){
@@ -8297,10 +8297,10 @@ void IMU::accInit (void) {
  8003a76:	2b14      	cmp	r3, #20
  8003a78:	d1d3      	bne.n	8003a22 <_ZN3IMU4initEP19__SPI_HandleTypeDefPN3ros11NodeHandle_I13STMF4HardwareLi20ELi20ELi255ELi255EEE+0x5e>
  8003a7a:	e7db      	b.n	8003a34 <_ZN3IMU4initEP19__SPI_HandleTypeDefPN3ros11NodeHandle_I13STMF4HardwareLi20ELi20ELi255ELi255EEE+0x70>
- 8003a7c:	0800929c 	.word	0x0800929c
- 8003a80:	08009284 	.word	0x08009284
+ 8003a7c:	080092b4 	.word	0x080092b4
+ 8003a80:	0800929c 	.word	0x0800929c
  8003a84:	080036d3 	.word	0x080036d3
- 8003a88:	080092dc 	.word	0x080092dc
+ 8003a88:	080092f4 	.word	0x080092f4
 
 08003a8c <_ZN3IMU4readEv>:
 {
@@ -10066,7 +10066,7 @@ static uint32_t DMA_CalcBaseAndBitshift(DMA_HandleTypeDef *hdma)
  800467a:	6d80      	ldr	r0, [r0, #88]	; 0x58
  800467c:	4770      	bx	lr
  800467e:	bf00      	nop
- 8004680:	08009304 	.word	0x08009304
+ 8004680:	0800931c 	.word	0x0800931c
 
 08004684 <HAL_DMA_Init>:
 {
@@ -11700,7 +11700,7 @@ void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
  8005016:	e7d3      	b.n	8004fc0 <HAL_RCC_ClockConfig+0xcc>
  8005018:	40023c00 	.word	0x40023c00
  800501c:	40023800 	.word	0x40023800
- 8005020:	080092ec 	.word	0x080092ec
+ 8005020:	08009304 	.word	0x08009304
  8005024:	20000004 	.word	0x20000004
 
 08005028 <HAL_RCC_GetHCLKFreq>:
@@ -11734,7 +11734,7 @@ uint32_t HAL_RCC_GetPCLK1Freq(void)
  8005044:	40d8      	lsrs	r0, r3
  8005046:	4770      	bx	lr
  8005048:	40023800 	.word	0x40023800
- 800504c:	080092fc 	.word	0x080092fc
+ 800504c:	08009314 	.word	0x08009314
  8005050:	20000004 	.word	0x20000004
 
 08005054 <HAL_RCC_GetPCLK2Freq>:
@@ -11755,7 +11755,7 @@ uint32_t HAL_RCC_GetPCLK2Freq(void)
  8005064:	40d8      	lsrs	r0, r3
  8005066:	4770      	bx	lr
  8005068:	40023800 	.word	0x40023800
- 800506c:	080092fc 	.word	0x080092fc
+ 800506c:	08009314 	.word	0x08009314
  8005070:	20000004 	.word	0x20000004
 
 08005074 <HAL_RCC_OscConfig>:
@@ -14793,7 +14793,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8006798:	f000 fc0a 	bl	8006fb0 <_ZN10__cxxabiv117__class_type_infoD1Ev>
  800679c:	4620      	mov	r0, r4
  800679e:	bd10      	pop	{r4, pc}
- 80067a0:	08009348 	.word	0x08009348
+ 80067a0:	08009360 	.word	0x08009360
 
 080067a4 <_ZN10__cxxabiv120__si_class_type_infoD0Ev>:
  80067a4:	b510      	push	{r4, lr}
@@ -15048,8 +15048,8 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  80069ba:	b2c0      	uxtb	r0, r0
  80069bc:	2300      	movs	r3, #0
  80069be:	e7c4      	b.n	800694a <__cxa_type_match+0x3e>
- 80069c0:	080093e0 	.word	0x080093e0
- 80069c4:	080093e8 	.word	0x080093e8
+ 80069c0:	080093f8 	.word	0x080093f8
+ 80069c4:	08009400 	.word	0x08009400
 
 080069c8 <__cxa_begin_cleanup>:
  80069c8:	b510      	push	{r4, lr}
@@ -15680,7 +15680,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8006fb8:	f000 f84b 	bl	8007052 <_ZNSt9type_infoD1Ev>
  8006fbc:	4620      	mov	r0, r4
  8006fbe:	bd10      	pop	{r4, pc}
- 8006fc0:	080093a4 	.word	0x080093a4
+ 8006fc0:	080093bc 	.word	0x080093bc
 
 08006fc4 <_ZN10__cxxabiv117__class_type_infoD0Ev>:
  8006fc4:	b510      	push	{r4, lr}
@@ -16335,11 +16335,11 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8007680:	2e85a308 	.word	0x2e85a308
  8007684:	43490f80 	.word	0x43490f80
  8007688:	3f22f984 	.word	0x3f22f984
- 800768c:	08009434 	.word	0x08009434
+ 800768c:	0800944c 	.word	0x0800944c
  8007690:	2e85a300 	.word	0x2e85a300
  8007694:	248d3132 	.word	0x248d3132
  8007698:	43800000 	.word	0x43800000
- 800769c:	080094b4 	.word	0x080094b4
+ 800769c:	080094cc 	.word	0x080094cc
 
 080076a0 <__kernel_cosf>:
  80076a0:	ee10 3a10 	vmov	r3, s0
@@ -16690,10 +16690,10 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8007a94:	f842 3027 	str.w	r3, [r2, r7, lsl #2]
  8007a98:	e7b5      	b.n	8007a06 <__kernel_rem_pio2f+0x2aa>
  8007a9a:	bf00      	nop
- 8007a9c:	080097f8 	.word	0x080097f8
+ 8007a9c:	08009810 	.word	0x08009810
  8007aa0:	3b800000 	.word	0x3b800000
  8007aa4:	43800000 	.word	0x43800000
- 8007aa8:	080097cc 	.word	0x080097cc
+ 8007aa8:	080097e4 	.word	0x080097e4
  8007aac:	00000000 	.word	0x00000000
  8007ab0:	a906      	add	r1, sp, #24
  8007ab2:	f851 1022 	ldr.w	r1, [r1, r2, lsl #2]
@@ -16982,8 +16982,8 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8007e38:	bde38e38 	.word	0xbde38e38
  8007e3c:	be4ccccd 	.word	0xbe4ccccd
  8007e40:	401bffff 	.word	0x401bffff
- 8007e44:	08009804 	.word	0x08009804
- 8007e48:	08009814 	.word	0x08009814
+ 8007e44:	0800981c 	.word	0x0800981c
+ 8007e48:	0800982c 	.word	0x0800982c
 
 08007e4c <fabsf>:
  8007e4c:	ee10 3a10 	vmov	r3, s0
@@ -17154,10 +17154,10 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8008006:	4798      	blx	r3
  8008008:	3501      	adds	r5, #1
  800800a:	e7f2      	b.n	8007ff2 <__libc_init_array+0x1e>
- 800800c:	08009ccc 	.word	0x08009ccc
- 8008010:	08009ccc 	.word	0x08009ccc
- 8008014:	08009ccc 	.word	0x08009ccc
- 8008018:	08009cd4 	.word	0x08009cd4
+ 800800c:	08009ce4 	.word	0x08009ce4
+ 8008010:	08009ce4 	.word	0x08009ce4
+ 8008014:	08009ce4 	.word	0x08009ce4
+ 8008018:	08009cec 	.word	0x08009cec
 
 0800801c <malloc>:
  800801c:	4b02      	ldr	r3, [pc, #8]	; (8008028 <malloc+0xc>)
@@ -18093,8 +18093,8 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8008916:	f000 f91c 	bl	8008b52 <__retarget_lock_release>
  800891a:	e7af      	b.n	800887c <__register_exitproc+0x3c>
  800891c:	20000514 	.word	0x20000514
- 8008920:	08009824 	.word	0x08009824
- 8008924:	08009828 	.word	0x08009828
+ 8008920:	0800983c 	.word	0x0800983c
+ 8008924:	08009840 	.word	0x08009840
  8008928:	0800801d 	.word	0x0800801d
 
 0800892c <_malloc_trim_r>:
