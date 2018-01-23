@@ -7,7 +7,7 @@
 #include <std_msgs/Int8.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Twist.h>
-#include <kduino/Potentio.h>
+#include <jsk_imu_mini_msgs/Potentio.h>
 /* inlcude ros related class */
 //#include <examples/class.h>
 #include <sensors/encoder/encoder.h>
@@ -58,7 +58,7 @@ public:
 	/*  ros msgs */
 	//std_msgs::Int8 radioflag_msg;
 	//geometry_msgs::Twist odom_msg;
-	kduino::Potentio potentio_msg;
+	jsk_imu_mini_msgs::Potentio potentio_msg;
 
 private:
 	/* aim linear and angular speed */
