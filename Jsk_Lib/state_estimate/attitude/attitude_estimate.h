@@ -118,8 +118,12 @@ public:
             imu_msg_.mag_data[i] = imu_->getMag()[i];
             imu_msg_.acc_data[i] = imu_->getAcc()[i];
 #endif
-            imu_msg_.angles[i] = estimator_->getAngles()[i];
           }
+
+        for(int i = 0; i < 4; i ++)
+        {
+        	imu_msg_.orientation[i] = estimator_->getQuaternions()[i];
+        }
 
         imu_pub_->publish(&imu_msg_);
       }
@@ -129,6 +133,8 @@ public:
   inline const Vector3f getAngles()  { return estimator_->getAngles(); }
 
   inline const Vector3f getVels() { return estimator_->getVels(); }
+
+  inline const Quaternion getQuaternion() { return estimator_->getQuaternion(); }
 
 
   static const uint8_t PUB_INTERVAL = 2;

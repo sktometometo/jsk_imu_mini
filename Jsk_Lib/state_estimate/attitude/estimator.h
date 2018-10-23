@@ -86,6 +86,8 @@ public:
   static const uint8_t Y = 1;
   static const uint8_t Z = 2;
 
+  Quaternion getQuaternion(){return q_;}
+
   Vector3f getAngles(){return rpy_;}
   Vector3f getVels(){return gyro_v_;} // should be the virtual frame
 

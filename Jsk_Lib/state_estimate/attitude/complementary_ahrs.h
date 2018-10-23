@@ -155,6 +155,9 @@ private:
      //** refrence1: https://sites.google.com/site/myimuestimationexperience/sensors/magnetometer
      //** refrence2: http://uav.xenocross.net/hdg.html
      //********************************************************************************
+
+    q_ = Quaternion( rpy_.x, rpy_.y, rpy_z );
+
     /* update */
     if(valid_acc) cnt++;
     if(cnt == PRESCLAER_ACC) cnt = 0;
