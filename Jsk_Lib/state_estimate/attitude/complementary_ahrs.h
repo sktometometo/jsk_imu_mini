@@ -156,7 +156,7 @@ private:
      //** refrence2: http://uav.xenocross.net/hdg.html
      //********************************************************************************
 
-    q_ = Quaternion( rpy_.x, rpy_.y, rpy_z );
+    q_.from_euler( rpy_.x, rpy_.y, rpy_.z );
 
     /* update */
     if(valid_acc) cnt++;
