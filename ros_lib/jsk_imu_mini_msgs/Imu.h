@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "ros/msg.h"
 #include "ros/time.h"
+#include "geometry_msgs/Quaternion.h"
 
 namespace jsk_imu_mini_msgs
 {
@@ -14,17 +15,17 @@ namespace jsk_imu_mini_msgs
   {
     public:
       ros::Time stamp;
+      geometry_msgs::Quaternion orientation;
       float acc_data[3];
       float gyro_data[3];
       float mag_data[3];
-      float angles[3];
 
     Imu():
       stamp(),
+      orientation(),
       acc_data(),
       gyro_data(),
-      mag_data(),
-      angles()
+      mag_data()
     {
     }
 
@@ -41,6 +42,7 @@ namespace jsk_imu_mini_msgs
       *(outbuffer + offset + 2) = (this->stamp.nsec >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (this->stamp.nsec >> (8 * 3)) & 0xFF;
       offset += sizeof(this->stamp.nsec);
+      offset += this->orientation.serialize(outbuffer + offset);
       for( uint8_t i = 0; i < 3; i++){
       union {
         float real;
@@ -77,18 +79,6 @@ namespace jsk_imu_mini_msgs
       *(outbuffer + offset + 3) = (u_mag_datai.base >> (8 * 3)) & 0xFF;
       offset += sizeof(this->mag_data[i]);
       }
-      for( uint8_t i = 0; i < 3; i++){
-      union {
-        float real;
-        uint32_t base;
-      } u_anglesi;
-      u_anglesi.real = this->angles[i];
-      *(outbuffer + offset + 0) = (u_anglesi.base >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (u_anglesi.base >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (u_anglesi.base >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (u_anglesi.base >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->angles[i]);
-      }
       return offset;
     }
 
@@ -105,6 +95,7 @@ namespace jsk_imu_mini_msgs
       this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
       this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       offset += sizeof(this->stamp.nsec);
+      offset += this->orientation.deserialize(inbuffer + offset);
       for( uint8_t i = 0; i < 3; i++){
       union {
         float real;
@@ -144,24 +135,11 @@ namespace jsk_imu_mini_msgs
       this->mag_data[i] = u_mag_datai.real;
       offset += sizeof(this->mag_data[i]);
       }
-      for( uint8_t i = 0; i < 3; i++){
-      union {
-        float real;
-        uint32_t base;
-      } u_anglesi;
-      u_anglesi.base = 0;
-      u_anglesi.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
-      u_anglesi.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
-      u_anglesi.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
-      u_anglesi.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
-      this->angles[i] = u_anglesi.real;
-      offset += sizeof(this->angles[i]);
-      }
      return offset;
     }
 
     const char * getType(){ return "jsk_imu_mini_msgs/Imu"; };
-    const char * getMD5(){ return "68b769ca85e5d9c44dbce51dc60e4be7"; };
+    const char * getMD5(){ return "1487150e66cb92794e797359541ff5d6"; };
 
   };
 

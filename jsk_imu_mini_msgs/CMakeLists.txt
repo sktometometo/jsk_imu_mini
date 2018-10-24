@@ -13,7 +13,13 @@ set(MSG_FILES
   Potentio.msg
 )
 
+set(SRV_FILES
+  ImuConfig.srv
+)
+
 add_message_files(DIRECTORY msg FILES ${MSG_FILES})
+
+add_service_files(DIRECTORY srv FILES ${SRV_FILES})
 
 generate_messages(DEPENDENCIES ${MSG_DEPS})
 

@@ -135,6 +135,6 @@ private:
 	void readCalibData(void);
 	void writeCalibData(void);
 
-	void imuConfigCallback(const std_msgs::UInt8& config_msg);
+        void IMU::imuConfigCallback(const jsk_imu_mini_msgs::ImuConfig::Request& req, jsk_imu_mini_msgs::ImuConfig::Response& res);
 };
 #endif
