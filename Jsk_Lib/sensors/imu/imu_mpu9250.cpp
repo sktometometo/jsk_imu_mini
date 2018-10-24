@@ -30,17 +30,13 @@ void IMU::init(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
 	gyro_offset_.zero();
 	mag_offset_.zero();
 
-        imu_config_serviceserver_ = new ros::ServiceServer2<jsk_imu_mini_msgs::ImuConfig::Request
-                                                 ,jsk_imu_mini_msgs::ImuConfig::Response
-                                                 ,IMU> 
-                                                 ("/imu_config_cmd"
-                                                 ,&IMU::imuConfigCallback
-                                                 ,this);
-        nh_->subscribe<jsk_imu_mini_msgs::ImuConfig::Request
-                      ,jsk_imu_mini_msgs::ImuConfig::Response
-                      ,IMU>(*imu_confing_serviceserver_);
-        // imu_config_sub_ = new ros::Subscriber2<std_msgs::UInt8, IMU> ("/imu_config_cmd", &IMU::imuConfigCallback, this );
-	// nh_->subscribe<std_msgs::UInt8, IMU>(*imu_config_sub_);
+    imu_config_serviceserver_ = new ros::ServiceServer2<jsk_imu_mini_msgs::ImuConfig::Request
+                                                       ,jsk_imu_mini_msgs::ImuConfig::Response
+                                                       ,IMU>
+                                                       ("/imu_config_cmd",&IMU::imuConfigCallback,this);
+    nh_->advertiseService<jsk_imu_mini_msgs::ImuConfig::Request
+                         ,jsk_imu_mini_msgs::ImuConfig::Response
+                         ,IMU>(*imu_config_serviceserver_);
 
 	ahb_suspend_flag_ = false;
 	mag_filtering_flag_ = true;

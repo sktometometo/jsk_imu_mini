@@ -48,7 +48,7 @@ namespace ros {
       typedef void(*CallbackT)(const MReq&,  MRes&);
 
       ServiceServer(const char* topic_name, CallbackT cb) :
-        pub(topic_name, &resp, rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_PUBLISHER)
+        pub(topic_name, &res, rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_PUBLISHER)
       {
         this->topic_ = topic_name;
         this->cb_ = cb;
@@ -57,27 +57,27 @@ namespace ros {
       // these refer to the subscriber
       virtual void callback(unsigned char *data){
         req.deserialize(data);
-        cb_(req,resp);
-        pub.publish(&resp);
+        cb_(req,res);
+        pub.publish(&res);
       }
       virtual const char * getMsgType(){ return this->req.getType(); }
       virtual const char * getMsgMD5(){ return this->req.getMD5(); }
       virtual int getEndpointType(){ return rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_SUBSCRIBER; }
 
       MReq req;
-      MRes resp;
+      MRes res;
       Publisher pub;
     private:
       CallbackT cb_;
   };
 
-  template<typename MReq, typename MRes, class T>
+  template<class MReq, class MRes, class T>
   class ServiceServer2 : public Subscriber_ {
     public:
-      typedef void(T::*CallbackT)(const MReq&,  MRes&);
+      typedef void(T::*CallbackT)(const MReq&, MRes&);
 
-      ServiceServer(const char* topic_name, CallbackT cb, T *obj) :
-        pub(topic_name, &resp, rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_PUBLISHER)
+      ServiceServer2(const char* topic_name, CallbackT cb, T *obj) :
+        pub(topic_name, &res, rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_PUBLISHER)
       {
         this->topic_   = topic_name;
         this->obj_     = obj_;
@@ -87,19 +87,19 @@ namespace ros {
       // these refer to the subscriber
       virtual void callback(unsigned char *data){
         req.deserialize(data);
-        this->fun_obj_(obj_,req,resp);
-        pub.publish(&resp);
+        (obj_->*(this->fun_obj_))(req,res);
+        pub.publish(&res);
       }
       virtual const char * getMsgType(){ return this->req.getType(); }
       virtual const char * getMsgMD5(){ return this->req.getMD5(); }
       virtual int getEndpointType(){ return rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_SUBSCRIBER; }
 
       MReq req;
-      MRes resp;
+      MRes res;
       Publisher pub;
     private:
       T* obj_;
-      std::mem_fun1_t<void, T, const MReq&, MRes&> fun_obj_;
+      CallbackT fun_obj_;
   };
 
 }

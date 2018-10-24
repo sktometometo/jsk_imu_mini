@@ -90,7 +90,6 @@ namespace ros {
       Subscriber2(const char * topic_name, CallbackT cb, T *obj,  int endpoint=rosserial_msgs::TopicInfo::ID_SUBSCRIBER) :
         obj_(obj), fun_obj_(cb), endpoint_(endpoint)
       {
-        //std::binder1st t  = std::bind1st(std::mem_fun1_t())
         topic_ = topic_name;
       };
 

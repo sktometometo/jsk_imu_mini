@@ -114,10 +114,10 @@ public:
 #endif
           }
 
-        for(uint8_t i = 0; i < 4; i ++)
-        {
-        	imu_msg_.orientation[i] = estimator_->getQuaternion()[i];
-        }
+      	imu_msg_.orientation.x = estimator_->getQuaternion()[0];
+      	imu_msg_.orientation.y = estimator_->getQuaternion()[1];
+      	imu_msg_.orientation.z = estimator_->getQuaternion()[2];
+      	imu_msg_.orientation.w = estimator_->getQuaternion()[3];
 
         imu_pub_->publish(&imu_msg_);
       }
