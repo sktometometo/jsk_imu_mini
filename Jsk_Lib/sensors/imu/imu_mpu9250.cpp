@@ -30,13 +30,8 @@ void IMU::init(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
 	gyro_offset_.zero();
 	mag_offset_.zero();
 
-    imu_config_serviceserver_ = new ros::ServiceServer2<jsk_imu_mini_msgs::ImuConfig::Request
-                                                       ,jsk_imu_mini_msgs::ImuConfig::Response
-                                                       ,IMU>
-                                                       ("/imu_config_cmd",&IMU::imuConfigCallback,this);
-    nh_->advertiseService<jsk_imu_mini_msgs::ImuConfig::Request
-                         ,jsk_imu_mini_msgs::ImuConfig::Response
-                         ,IMU>(*imu_config_serviceserver_);
+        imu_config_sub_ = new ros::Subscriber2<std_msgs::UInt8, IMU> ("/imu_config_cmd", &IMU::imuConfigCallback, this );
+        nh_->subscribe<std_msgs::UInt8, IMU>(*imu_config_sub_);
 
 	ahb_suspend_flag_ = false;
 	mag_filtering_flag_ = true;
@@ -308,9 +303,17 @@ void IMU::process (void)
 		acc_offset_ += raw_acc_adc_;
 
 		if (calibrate_acc_ == 1) {
+			/*
 			acc_offset_[0] /= (float)CALIBRATING_STEP;
 			acc_offset_[1] /= (float)CALIBRATING_STEP;
 			acc_offset_[2] =  acc_offset_[2]/(float)CALIBRATING_STEP - GRAVITY_MSS;
+			*/
+			acc_offset_[0] /= (float)CALIBRATING_STEP;
+			acc_offset_[1] /= (float)CALIBRATING_STEP;
+			acc_offset_[2] /= (float)CALIBRATING_STEP;
+			Vector3f gravity_direction(acc_offset_[0],acc_offset_[1],acc_offset_[2]);
+			gravity_direction.normalize();
+                        acc_offset_ -= gravity_direction * GRAVITY_MSS;
 
 			writeCalibData();
 		}
@@ -390,26 +393,21 @@ void IMU::process (void)
 	}
 }
 
-void IMU::imuConfigCallback(const jsk_imu_mini_msgs::ImuConfig::Request& req, jsk_imu_mini_msgs::ImuConfig::Response& res)
+void IMU::imuConfigCallback(const std_msgs::UInt8& config_msg)
 {
-	switch(req.data)
+	switch(config_msg.data)
 	{
 	case RESET_CALIB_CMD:
 		acc_offset_.zero();
 		mag_offset_.zero();
 		//writeCalibData(); //no need?
-                res.data=0;
 		break;
 	case MPU_ACC_GYRO_CALIB_CMD:
 		calibrate_gyro_ = CALIBRATING_STEP;
 		calibrate_acc_ = CALIBRATING_STEP;
-                res.data=0;
 		break;
 	case MPU_MAG_CALIB_CMD:
 		calibrate_mag_ = CALIBRATING_MAG_STEP;
-                res.data=0;
 		break;
-        default:
-                res.data=0;
 	}
 }

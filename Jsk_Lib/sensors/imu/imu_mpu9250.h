@@ -20,7 +20,6 @@
 /* ros */
 #include <ros.h>
 #include <std_msgs/UInt8.h>
-#include <jsk_imu_mini_msgs/ImuConfig.h>
 #include <sensors/sensor.h>
 #include <stm32f4xx_hal_flash_ex.h>
 
@@ -92,7 +91,7 @@ private:
 	SPI_HandleTypeDef* hspi_;
 
 	ros::NodeHandle* nh_;
-	ros::ServiceServer2<jsk_imu_mini_msgs::ImuConfig::Request,jsk_imu_mini_msgs::ImuConfig::Response,IMU>* imu_config_serviceserver_;
+        ros::Subscriber2<std_msgs::UInt8, IMU>* imu_config_sub_;
 
 	uint8_t acc_gyro_calib_flag_;
 	uint8_t mag_calib_flag_;
@@ -136,6 +135,6 @@ private:
 	void readCalibData(void);
 	void writeCalibData(void);
 
-    void imuConfigCallback(const jsk_imu_mini_msgs::ImuConfig::Request&,jsk_imu_mini_msgs::ImuConfig::Response& );
+        void imuConfigCallback(const std_msgs::UInt8&);
 };
 #endif

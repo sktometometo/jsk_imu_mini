@@ -38,7 +38,7 @@
 //#define MAHONY 3
 
 /* please change the algorithm type according to your application */
-#define ESTIMATE_TYPE COMPLEMENTARY
+#define ESTIMATE_TYPE MADWICK
 
 class AttitudeEstimate
 {
