@@ -379,20 +379,6 @@ namespace ros {
       return false;
     }
 
-    /* Register a new Service server */
-    template<typename MReq, typename MRes, class T>
-    bool advertiseService(ServiceServer2<MReq,MRes,T> &srv){
-    	bool v = advertise(srv.pub);
-    	for(int i = 0; i < MAX_SUBSCRIBERS; i++){
-    		if(subscribers[i] == 0){
-    			subscribers[i] = (Subscriber_*) &srv;
-    			srv.id_ = i+100;
-    			return v;
-    		}
-    	}
-    	return false;
-    }
-
     /* Register a new Service Client */
     template<typename MReq, typename MRes>
     bool serviceClient(ServiceClient<MReq, MRes>& srv){
