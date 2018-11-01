@@ -16,7 +16,7 @@
 #define betaDef 0.1f // 2 * proportional gain
 #define ACC_GYRO 0
 #define ACC_GYRO_MAG 1
-#define ESTIMATE_METHOD ACC_GYRO_MAG
+#define ESTIMATE_METHOD ACC_GYRO
 
 class MadgwickAHRS : public EstimatorAlgorithm
 {
@@ -29,17 +29,17 @@ beta = betaDef; // 2 * proportional gain (Kp)
 virtual void  estimation()
   {
 #if ESTIMATE_METHOD == ACC_GYRO_MAG
-accGyroMagEstimate(gyro_b_[0], gyro_b_[1], gyro_b_[2], acc_b_[0], acc_b_[1], acc_b_[2], mag_b_[0], mag_b_[1], mag_b_[2]);
+accGyroMagEstimate(gyro_bodyframe_[0], gyro_bodyframe_[1], gyro_bodyframe_[2], acc_bodyframe_[0], acc_bodyframe_[1], acc_bodyframe_[2], mag_bodyframe_[0], mag_bodyframe_[1], mag_bodyframe_[2]);
 #endif
 
 #if ESTIMATE_METHOD == ACC_GYRO
-accGyroMagEstimate(gyro_b_[0], gyro_b_[1], gyro_b_[2], acc_b_[0], acc_b_[1], acc_b_[2]);
+accGyroEstimate(gyro_bodyframe_[0], gyro_bodyframe_[1], gyro_bodyframe_[2], acc_bodyframe_[0], acc_bodyframe_[1], acc_bodyframe_[2]);
 #endif
 
   }
 
 private:
- float beta;// algorithm gain
+  float beta;// algorithm gain
 
   void accGyroMagEstimate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz)
   {

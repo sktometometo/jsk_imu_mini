@@ -13,7 +13,6 @@
 
 #include <stdint.h>
 #include <math.h>
-/* #include "arm_math.h" */
 
 #define DELTA_T 0.01f
 
@@ -21,7 +20,7 @@ class EstimatorAlgorithm
 {
 public:
   EstimatorAlgorithm():
-    acc_b_(), acc_v_(), gyro_b_(), gyro_v_(), mag_b_(), mag_v_(),q_(),
+    acc_bodyframe_(), acc_virtualframe_(), gyro_bodyframe_(), gyro_virtualframe_(), mag_bodyframe_(), mag_virtualframe_(),q_(),
     desire_attitude_roll_(0), desire_attitude_pitch_(0),
     abs_rel_(ABSOLUTE_COORD)
   {
@@ -38,42 +37,19 @@ public:
 
     r_.from_euler(desire_attitude_roll_, desire_attitude_pitch_, 0);
 
-    /*
-    float32_t cos_roll = arm_cos_f32(desire_attitude_roll_);
-    float32_t sin_roll = arm_sin_f32(desire_attitude_roll_);
-    float32_t cos_pitch = arm_cos_f32(desire_attitude_pitch_);
-    float32_t sin_pitch = arm_sin_f32(desire_attitude_pitch_);
-
-    desire_attitude_r_[0] = cos_pitch;
-    desire_attitude_r_[1] = sin_pitch * sin_roll;
-    desire_attitude_r_[2] = sin_pitch * cos_roll;
-    desire_attitude_r_[3] = 0;
-    desire_attitude_r_[4] = cos_roll;
-    desire_attitude_r_[5] = -sin_roll;
-    desire_attitude_r_[6] = -sin_pitch;
-    desire_attitude_r_[7] = cos_pitch * sin_roll;
-    desire_attitude_r_[8] = cos_pitch * cos_roll;
-    */
   }
-
 
   void update(const Vector3f& gyro, const Vector3f& acc, const Vector3f& mag)
   {
     /* the sensor data in body frame */
-    acc_b_ = acc;
-    gyro_b_ = gyro;
-    mag_b_ = mag;
+    acc_bodyframe_ = acc;
+    gyro_bodyframe_ = gyro;
+    mag_bodyframe_ = mag;
 
     /* the sensor data in virtual frame */
-    acc_v_ = r_* acc_b_;
-    gyro_v_ = r_*  gyro_b_;
-    mag_v_ = r_ * mag_b_;
-
-    /*
-    arm_mat_mult_f32(&desire_attitude_R_, &acc_b_vec_, &acc_v_vec_);
-    arm_mat_mult_f32(&desire_attitude_R_, &gyro_b_vec_, &gyro_v_vec_);
-    arm_mat_mult_f32(&desire_attitude_R_, &mag_b_vec_, &mag_v_vec_);
-    */
+    acc_virtualframe_ = r_* acc_bodyframe_;
+    gyro_virtualframe_ = r_*  gyro_bodyframe_;
+    mag_virtualframe_ = r_ * mag_bodyframe_;
 
     estimation();
   }
@@ -89,29 +65,20 @@ public:
   Quaternion getQuaternion(){return q_;}
 
   Vector3f getAngles(){return rpy_;}
-  Vector3f getVels(){return gyro_v_;} // should be the virtual frame
+  Vector3f getVels(){return gyro_virtualframe_;} // should be the virtual frame
 
-  Vector3f getAccB(){return acc_b_;}
-  Vector3f getGyroB(){return gyro_b_;}
-  Vector3f getMagB(){return mag_b_;}
+  Vector3f getAccB(){return acc_bodyframe_;}
+  Vector3f getGyroB(){return gyro_bodyframe_;}
+  Vector3f getMagB(){return mag_bodyframe_;}
 
-  Vector3f getAccV(){return acc_v_;}
-  Vector3f getGyroV(){return gyro_v_;}
-  Vector3f getMagV(){return mag_v_;} 
+  Vector3f getAccV(){return acc_virtualframe_;}
+  Vector3f getGyroV(){return gyro_virtualframe_;}
+  Vector3f getMagV(){return mag_virtualframe_;} 
 
 protected:
-#if 0
-  arm_matrix_instance_f32 acc_b_vec_, gyro_b_vec_, mag_b_vec_; //sensor data in body frame
-  arm_matrix_instance_f32 acc_v_vec_, gyro_v_vec_, mag_v_vec_; //sensor data in virtual frame
-  float acc_b_[3], gyro_b_[3],  mag_b_[3];
-  float acc_v_[3], gyro_v_[3],  mag_v_[3]; //sensors data in virtual frame
-  arm_matrix_instance_f32 angle_vec_;
-  float angles_[3];
-  float rpy_[3];
-#endif
-  Vector3f acc_b_, acc_v_;  
-  Vector3f gyro_b_, gyro_v_;
-  Vector3f mag_b_, mag_v_;
+  Vector3f acc_bodyframe_, acc_virtualframe_;  
+  Vector3f gyro_bodyframe_, gyro_virtualframe_;
+  Vector3f mag_bodyframe_, mag_virtualframe_;
 
   Matrix3f r_;
   Vector3f rpy_;

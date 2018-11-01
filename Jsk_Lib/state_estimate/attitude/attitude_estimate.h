@@ -38,7 +38,7 @@
 //#define MAHONY 3
 
 /* please change the algorithm type according to your application */
-#define ESTIMATE_TYPE COMPLEMENTARY
+#define ESTIMATE_TYPE MADWICK
 
 class AttitudeEstimate
 {
@@ -103,15 +103,9 @@ public:
         imu_msg_.stamp = nh_->now();
         for(int i = 0; i < 3 ; i ++)
           {
-#if 0 //virtual coord
-            imu_msg_.gyro_data[i] = estimator_->getGyroV()[i];
-            imu_msg_.mag_data[i] = estimator_->getMagV()[i];
-            imu_msg_.acc_data[i] = estimator_->getAccV()[i];
-#else //raw data
             imu_msg_.gyro_data[i] = imu_->getGyro()[i];
             imu_msg_.mag_data[i] = imu_->getMag()[i];
             imu_msg_.acc_data[i] = imu_->getAcc()[i];
-#endif
           }
 
       	imu_msg_.orientation.x = estimator_->getQuaternion()[0];
