@@ -86,8 +86,9 @@ void IMU::readCalibData()
 	{
 		for(int i = 0; i < 3; i++)
 		{
-			acc_offset_[i] = (*(__IO float*)(CALIB_DATA_ADDRESS + CALIB_ACC_ADDRESS + 4 * i));
-			mag_offset_[i] = (*(__IO float*)(CALIB_DATA_ADDRESS + CALIB_MAG_ADDRESS + 4 * i));
+			acc_offset_[i] = (*(float*)(CALIB_DATA_ADDRESS + CALIB_ACC_ADDRESS + 4 * i));
+			gyro_offset_[i]= (*(float*)(CALIB_DATA_ADDRESS + CALIB_GYRO_ADDRESS + 4 * i));
+			mag_offset_[i] = (*(float*)(CALIB_DATA_ADDRESS + CALIB_MAG_ADDRESS + 4 * i));
 		}
 		/* If the program operation is completed, disable the PG Bit */
 		FLASH->CR &= (~FLASH_CR_PG);
@@ -114,9 +115,9 @@ void IMU::writeCalibData()
 
 	for(int i = 0; i < 3; i++)
 	{
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_ACC_ADDRESS + 4 * i, (*(__IO uint64_t*)(&acc_offset_[i])));
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_MAG_ADDRESS + 4 * i, (*(__IO uint64_t*)(&mag_offset_[i])));
-
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_ACC_ADDRESS + 4 * i, (*(__IO uint32_t*)(&acc_offset_[i])));
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_GYRO_ADDRESS + 4 * i, (*(__IO uint32_t*)(&gyro_offset_[i])));
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_MAG_ADDRESS + 4 * i, (*(__IO uint32_t*)(&mag_offset_[i])));
 	}
 
 	r = HAL_FLASH_Lock();
@@ -143,6 +144,7 @@ uint8_t IMU::mpuRead(uint8_t address)
 	IMU_SPI_CS_H;
 	return temp;
 }
+
 
 void IMU::gyroInit(void)
 {
@@ -291,10 +293,13 @@ void IMU::process (void)
 	}
 	else
 	{
+                /*
 		raw_gyro_= raw_gyro_adc_ - gyro_offset_;
 		raw_gyro_p_  -= (raw_gyro_p_/GYRO_LPF_FACTOR);
 		raw_gyro_p_   += raw_gyro_;
 		gyro_  = (raw_gyro_p_/GYRO_LPF_FACTOR);
+                */
+                gyro_ = raw_gyro_adc_ - gyro_offset_;
 	}
 
 	/* acc part */
@@ -321,10 +326,13 @@ void IMU::process (void)
 	}
 	else
 	{
+                /*
 		raw_acc_ = raw_acc_adc_ - acc_offset_;
 		raw_acc_p_    -= (raw_acc_p_/ACC_LPF_FACTOR);
 		raw_acc_p_    += raw_acc_;
 		acc_  = (raw_acc_p_/ACC_LPF_FACTOR);
+                */
+                acc_ = raw_acc_adc_ - acc_offset_;
 	}
 
 	/* mag part */
@@ -347,7 +355,6 @@ void IMU::process (void)
 		if(calibrate_mag_ == 1)
 		{
 			mag_offset_ = (mag_min_ + mag_max_) /2 ;
-
 			writeCalibData();
 		}
 		calibrate_mag_ --;
@@ -355,11 +362,14 @@ void IMU::process (void)
 	else
 	{
 		/* transform coordinate */
+                /*
 		raw_mag_[0] = raw_mag_adc_[1] - mag_offset_[1];
 		raw_mag_[1] = raw_mag_adc_[0]  - mag_offset_[0];
-		raw_mag_[2] = -(raw_mag_adc_[2] - mag_offset_[2]);
+                raw_mag_[2] = -(raw_mag_adc_[2] - mag_offset_[2]);
+                */
 
 		/* filtering => because the magnetemeter generates too much outlier, not know the reason */
+                /*
 		if(mag_filtering_flag_)
 		{
 			bool mag_outlier_flag = false;
@@ -390,6 +400,10 @@ void IMU::process (void)
 			mag_filtering_flag_  = true;
 			}
 		}
+                */
+		mag_[0] = raw_mag_adc_[1] - mag_offset_[1];
+		mag_[1] = raw_mag_adc_[0]  - mag_offset_[0];
+		mag_[2] = -(raw_mag_adc_[2] - mag_offset_[2]);
 	}
 }
 
@@ -399,8 +413,8 @@ void IMU::imuConfigCallback(const std_msgs::UInt8& config_msg)
 	{
 	case RESET_CALIB_CMD:
 		acc_offset_.zero();
+		gyro_offset_.zero();
 		mag_offset_.zero();
-		//writeCalibData(); //no need?
 		break;
 	case MPU_ACC_GYRO_CALIB_CMD:
 		calibrate_gyro_ = CALIBRATING_STEP;
@@ -409,5 +423,122 @@ void IMU::imuConfigCallback(const std_msgs::UInt8& config_msg)
 	case MPU_MAG_CALIB_CMD:
 		calibrate_mag_ = CALIBRATING_MAG_STEP;
 		break;
+	case MPU_CALIB_LOAD_CMD:
+		readCalibData();
+		break;
 	}
 }
+
+Vector3ui IMU::getIMUGyroSelftest()
+{
+    Vector3ui ans;    
+    ans[0] = this->mpuRead(REG_ADDR_SELF_TEST_X_GYRO);
+    HAL_Delay(1);
+    ans[1] = this->mpuRead(REG_ADDR_SELF_TEST_Y_GYRO);
+    HAL_Delay(1);
+    ans[2] = this->mpuRead(REG_ADDR_SELF_TEST_Z_GYRO);
+    HAL_Delay(1);
+    return ans;
+}
+
+Vector3ui IMU::getIMUAccSelfTest()
+{
+    Vector3ui ans;    
+    ans[0] = this->mpuRead(REG_ADDR_SELF_TEST_X_ACCEL);
+    HAL_Delay(1);
+    ans[1] = this->mpuRead(REG_ADDR_SELF_TEST_Y_ACCEL);
+    HAL_Delay(1);
+    ans[2] = this->mpuRead(REG_ADDR_SELF_TEST_Z_ACCEL);
+    HAL_Delay(1);
+    return ans;
+}
+
+void      IMU::setIMUGyroOffset( uint16_t offset_x, uint16_t offset_y, uint16_t offset_z )
+{
+    this->mpuWrite( REG_ADDR_XG_OFFSET_H, offset_x >> 8 );
+    HAL_Delay(1);
+    this->mpuWrite( REG_ADDR_XG_OFFSET_L, offset_x % 0x100 );
+    HAL_Delay(1);
+    this->mpuWrite( REG_ADDR_YG_OFFSET_H, offset_x >> 8 );
+    HAL_Delay(1);
+    this->mpuWrite( REG_ADDR_YG_OFFSET_L, offset_x % 0x100 );
+    HAL_Delay(1);
+    this->mpuWrite( REG_ADDR_ZG_OFFSET_H, offset_x >> 8 );
+    HAL_Delay(1);
+    this->mpuWrite( REG_ADDR_ZG_OFFSET_L, offset_x % 0x100 );
+    HAL_Delay(1);
+}
+
+void      IMU::setIMUGyroOffset( Vector3ui offset )
+{
+    this->setIMUGyroOffset( offset[0], offset[1], offset[2] );
+}
+
+Vector3ui IMU::getIMUGyroOffset()
+{
+    Vector3ui ans;
+    uint8_t value_h, value_l;
+
+    value_h = this->mpuRead( REG_ADDR_XG_OFFSET_H );
+    HAL_Delay(1);
+    value_l = this->mpuRead( REG_ADDR_XG_OFFSET_L );
+    HAL_Delay(1);
+    ans[0] = (value_h << 8) + value_l;
+
+    value_h = this->mpuRead( REG_ADDR_YG_OFFSET_H );
+    HAL_Delay(1);
+    value_l = this->mpuRead( REG_ADDR_YG_OFFSET_L );
+    HAL_Delay(1);
+    ans[1] = (value_h << 8) + value_l;
+
+    value_h = this->mpuRead( REG_ADDR_ZG_OFFSET_H );
+    HAL_Delay(1);
+    value_l = this->mpuRead( REG_ADDR_ZG_OFFSET_L );
+    HAL_Delay(1);
+    ans[2] = (value_h << 8) + value_l;
+
+    return ans;
+}
+
+void    IMU::setIMUSampleRateDivider( uint8_t sample_rate_divider  )
+{
+    this->mpuWrite( REG_ADDR_SMPLRT_DIV, sample_rate_divider );
+    HAL_Delay(1);
+}
+
+uint8_t IMU::getIMUSampleRateDivider()
+{
+    uint8_t ans = this->mpuRead( REG_ADDR_SMPLRT_DIV );
+    HAL_Delay(1);
+    return ans;
+}
+
+void    IMU::setIMUConfiguration( uint8_t configuration )
+{
+    this->mpuWrite( REG_ADDR_CONFIG, configuration );
+    HAL_Delay(1);
+}
+
+uint8_t IMU::getIMUConfiguration()
+{
+	uint8_t ans = this->mpuRead( REG_ADDR_CONFIG );
+	HAL_Delay(1);
+	return ans;
+}
+
+void    IMU::setIMUFIFOMode( uint8_t fifo_mode )
+{
+	uint8_t config = this->getIMUConfiguration();
+	if ( fifo_mode == 1 ) {
+		config = config | 0b01000000;
+	} else {
+		config = config & 0b10111111;
+	}
+}
+
+uint8_t IMU::getIMUFIFOMode()
+{
+	uint8_t ans = this->getIMUConfiguration();
+	return ( ans >> 6 ) % 0b10;
+}
+
