@@ -25,11 +25,6 @@ void IMU::init(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
 	mag_.zero();
 	nh_ = nh;
 
-	// to check readCalibData's behavior
-	acc_offset_.zero();
-	gyro_offset_.zero();
-	mag_offset_.zero();
-
         imu_config_sub_ = new ros::Subscriber2<std_msgs::UInt8, IMU> ("/imu_config_cmd", &IMU::imuConfigCallback, this );
         nh_->subscribe<std_msgs::UInt8, IMU>(*imu_config_sub_);
 
@@ -38,6 +33,7 @@ void IMU::init(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
 	mag_outlier_counter_ = 0;
 
 	hspi_ = hspi;
+	HAL_Delay(100);
 	readCalibData();
 	gyroInit();
 	accInit();
@@ -160,9 +156,7 @@ void IMU::gyroInit(void)
 	mpuWrite( 0x1B, 0x18);             //GYRO_CONFIG   -- FS_SEL = 3: Full scale set to 2000 deg/sec
 	HAL_Delay(10); //very importnat! between gyro and acc
 
-	//calib in the first time
-	calibrate_gyro_ = 10; //CALIBRATING_STEP;
-	//calibrate_gyro_ = 0;
+	calibrate_gyro_ = 0;
 
 	raw_gyro_p_.zero();
 }
