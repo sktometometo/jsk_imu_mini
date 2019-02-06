@@ -4,11 +4,20 @@ DIRECTORY_MAIN=$(pwd)
 DIRECTORY_ROS_LIB=$(pwd)/ros_lib/
 DIRECTORY_TEMP=$DIRECTORY_MAIN/temp
 
-cd $DIRECTORY_MAIN
+# 古いバージョンの消去
+rm -rf $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs
+
+# msgファイルなどのbuild
 catkin build jsk_imu_mini_msgs
-mkdir $DIRECTORY_TEMP/Inc -p
+
+# headerの生成
+mkdir $DIRECTORY_TEMP
 cd $DIRECTORY_TEMP
-rosrun rosserial_stm32 make_libraries.py .
-cp -r $DIRECTORY_TEMP/Inc/jsk_imu_mini_msgs $DIRECTORY_ROS_LIB/
+rosrun rosserial_client make_libraries .
+
+# headerのコピー
+cp -r $DIRECTORY_TEMP/ros_lib/jsk_imu_mini_msgs $DIRECTORY_ROS_LIB/
+
+# 一時ファイルの削除
 cd ../
 rm -rf temp/
