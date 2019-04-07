@@ -82,9 +82,9 @@ void IMU::readCalibData()
 	{
 		for(int i = 0; i < 3; i++)
 		{
-			acc_offset_[i] = (*(float*)(CALIB_DATA_ADDRESS + CALIB_ACC_ADDRESS + 4 * i));
-			gyro_offset_[i]= (*(float*)(CALIB_DATA_ADDRESS + CALIB_GYRO_ADDRESS + 4 * i));
-			mag_offset_[i] = (*(float*)(CALIB_DATA_ADDRESS + CALIB_MAG_ADDRESS + 4 * i));
+			this->acc_offset_[i] = (*(float*)(CALIB_DATA_ADDRESS + CALIB_ACC_ADDRESS + 4 * i));
+			this->gyro_offset_[i]= (*(float*)(CALIB_DATA_ADDRESS + CALIB_GYRO_ADDRESS + 4 * i));
+			this->mag_offset_[i] = (*(float*)(CALIB_DATA_ADDRESS + CALIB_MAG_ADDRESS + 4 * i));
 		}
 		/* If the program operation is completed, disable the PG Bit */
 		FLASH->CR &= (~FLASH_CR_PG);
@@ -111,9 +111,9 @@ void IMU::writeCalibData()
 
 	for(int i = 0; i < 3; i++)
 	{
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_ACC_ADDRESS + 4 * i, (*(__IO uint32_t*)(&acc_offset_[i])));
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_GYRO_ADDRESS + 4 * i, (*(__IO uint32_t*)(&gyro_offset_[i])));
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_MAG_ADDRESS + 4 * i, (*(__IO uint32_t*)(&mag_offset_[i])));
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_ACC_ADDRESS + 4 * i, (*(__IO uint32_t*)(&this->acc_offset_[i])));
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_GYRO_ADDRESS + 4 * i, (*(__IO uint32_t*)(&this->gyro_offset_[i])));
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CALIB_DATA_ADDRESS + CALIB_MAG_ADDRESS + 4 * i, (*(__IO uint32_t*)(&this->mag_offset_[i])));
 	}
 
 	r = HAL_FLASH_Lock();
