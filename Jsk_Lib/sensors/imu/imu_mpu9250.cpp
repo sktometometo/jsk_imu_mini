@@ -89,6 +89,19 @@ void IMU::readCalibData()
 		/* If the program operation is completed, disable the PG Bit */
 		FLASH->CR &= (~FLASH_CR_PG);
 	}
+
+	/* set 0 to offset values when it is Nan */
+	for(int i = 0; i < 3; i++) {
+		if( this->acc_offset_[i] != this->acc_offset_[i] ) {
+			this->acc_offset_[i] = 0;
+		}
+		if( this->gyro_offset_[i] != this->gyro_offset_[i] ) {
+			this->gyro_offset_[i] = 0;
+		}
+		if( this->mag_offset_[i] != this->mag_offset_[i] ) {
+			this->mag_offset_[i] = 0;
+		}
+	}
 }
 
 void IMU::writeCalibData()
