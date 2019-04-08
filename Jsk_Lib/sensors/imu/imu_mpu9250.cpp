@@ -328,9 +328,7 @@ void IMU::process (void)
 			Vector3f gravity_direction(acc_offset_[0],acc_offset_[1],acc_offset_[2]);
 			gravity_direction.normalize();
                         acc_offset_ -= gravity_direction * GRAVITY_MSS;
-
-                       writeCalibData();
-                }
+        }
 		calibrate_acc_--;
 	}
 	else
@@ -364,7 +362,6 @@ void IMU::process (void)
 		if(calibrate_mag_ == 1)
 		{
 			mag_offset_ = (mag_min_ + mag_max_) /2 ;
-			writeCalibData();
 		}
 		calibrate_mag_ --;
 	}
@@ -434,6 +431,9 @@ void IMU::imuConfigCallback(const std_msgs::UInt8& config_msg)
 		break;
 	case MPU_CALIB_LOAD_CMD:
 		readCalibData();
+		break;
+	case MPU_CALIB_SAVE_CMD:
+		writeCalibData();
 		break;
 	}
 }

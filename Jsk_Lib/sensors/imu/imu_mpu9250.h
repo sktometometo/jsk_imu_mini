@@ -160,6 +160,7 @@ public:
 	static const uint8_t MPU_ACC_GYRO_CALIB_CMD = 0x01;
 	static const uint8_t MPU_MAG_CALIB_CMD = 0x02;
 	static const uint8_t MPU_CALIB_LOAD_CMD = 0x03;
+	static const uint8_t MPU_CALIB_SAVE_CMD = 0x04;
 
 	Vector3f  getAcc(){return acc_;}   // return acceleration in m/s^2
 	Vector3f  getGyro(){return gyro_;} // return angle velocity in 
