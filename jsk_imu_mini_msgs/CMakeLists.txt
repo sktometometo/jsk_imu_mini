@@ -11,6 +11,7 @@ set(MSG_FILES
   Imu.msg
   DesireCoord.msg
   Potentio.msg
+  Debug.msg
 )
 
 set(SRV_FILES

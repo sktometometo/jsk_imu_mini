@@ -27,6 +27,8 @@ void IMU::init(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
 
 	imu_config_sub_ = new ros::Subscriber2<std_msgs::UInt8, IMU> ("/imu_config_cmd", &IMU::imuConfigCallback, this );
 	nh_->subscribe<std_msgs::UInt8, IMU>(*imu_config_sub_);
+	imu_debug_pub_ = new ros::Publisher("debug", &imu_debug_msg_);
+	nh_->advertise(*imu_debug_pub_);
 
 	ahb_suspend_flag_ = false;
 	mag_filtering_flag_ = true;
@@ -327,8 +329,8 @@ void IMU::process (void)
 			gravity_direction.normalize();
                         acc_offset_ -= gravity_direction * GRAVITY_MSS;
 
-			writeCalibData();
-		}
+                       writeCalibData();
+                }
 		calibrate_acc_--;
 	}
 	else
@@ -549,3 +551,9 @@ uint8_t IMU::getIMUFIFOMode()
 	return ( ans >> 6 ) % 0b10;
 }
 
+void IMU::debugPrint(const std::string& message)
+{
+	imu_debug_msg_.stamp = nh_->now();
+	imu_debug_msg_.data = message;
+	imu_debug_pub_->publish(&imu_debug_msg_);
+}

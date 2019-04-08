@@ -215,6 +215,8 @@ private:
 
 	ros::NodeHandle* nh_;
         ros::Subscriber2<std_msgs::UInt8, IMU>* imu_config_sub_;
+        ros::Publisher* imu_debug_pub_;
+        jsk_imu_mini_msgs::Debug imu_debug_msg_;
 
 	uint8_t acc_gyro_calib_flag_;
 	uint8_t mag_calib_flag_;
@@ -259,5 +261,7 @@ private:
 	void writeCalibData(void);
 
     void imuConfigCallback(const std_msgs::UInt8&);
+
+    void debugPrint(const std::string&);
 };
 #endif
