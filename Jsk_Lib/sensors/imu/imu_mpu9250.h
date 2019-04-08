@@ -248,6 +248,8 @@ private:
 
 	bool ahb_suspend_flag_; // to avoid the confliction between SPI1 and USART1(ros)
 
+	bool SPI_connection_flag_;
+
 	void gyroInit(void);
 	void accInit(void);
 	void magInit(void);

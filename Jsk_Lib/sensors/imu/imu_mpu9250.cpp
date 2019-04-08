@@ -20,6 +20,8 @@ void IMU::init(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
 {
 	reset_calib_flag_  = 0;
 
+	SPI_connection_flag_ = true;
+
 	acc_.zero();
 	gyro_.zero();
 	mag_.zero();
@@ -154,12 +156,19 @@ void IMU::mpuWrite(uint8_t address, uint8_t value)
 
 uint8_t IMU::mpuRead(uint8_t address)
 {
+	HAL_StatusTypeDef r;
+
 	uint8_t t_data[1] = {0};
 	t_data[0] = address | 0x80;
 	uint8_t temp;
 	IMU_SPI_CS_L;
 	HAL_SPI_Transmit(hspi_, t_data, 1, 1000);
-	HAL_SPI_Receive(hspi_, &temp, 1, 1000);
+	r = HAL_SPI_Receive(hspi_, &temp, 1, 1000);
+	if( r == HAL_OK ) {
+		SPI_connection_flag_ = true;
+	} else {
+		SPI_connection_flag_ = false;
+	}
 	IMU_SPI_CS_H;
 	return temp;
 }
@@ -238,6 +247,8 @@ void IMU::magInit(void)
 
 void IMU::read()
 {
+	HAL_StatusTypeDef r;
+
 	static int i = 0;
 	uint8_t adc_gyro[6];
 	uint8_t adc_acc[6];
@@ -248,7 +259,12 @@ void IMU::read()
 
 	IMU_SPI_CS_L;
 	HAL_SPI_Transmit(hspi_, t_data, 1, 1000);
-	HAL_SPI_Receive(hspi_, adc_gyro, 6, 1000);
+	r = HAL_SPI_Receive(hspi_, adc_gyro, 6, 1000);
+	if( r == HAL_OK ) {
+		SPI_connection_flag_ = true;
+	} else {
+		SPI_connection_flag_ = false;
+	}
 	IMU_SPI_CS_H;
 
 	/* we need add some delay between each sensor reading */
@@ -259,7 +275,12 @@ void IMU::read()
 	t_data[0] = 0x3B | 0x80;
 	IMU_SPI_CS_L;
 	HAL_SPI_Transmit(hspi_, t_data, 1, 1000);
-	HAL_SPI_Receive(hspi_, adc_acc, 6, 1000);
+	r = HAL_SPI_Receive(hspi_, adc_acc, 6, 1000);
+	if( r == HAL_OK ) {
+		SPI_connection_flag_ = true;
+	} else {
+		SPI_connection_flag_ = false;
+	}
 	IMU_SPI_CS_H;
 
 	/* we need add some delay between each sensor reading */
@@ -276,7 +297,12 @@ void IMU::read()
 		t_data[0] = 0x49 | 0x80;
 		IMU_SPI_CS_L;
 		HAL_SPI_Transmit(hspi_, t_data, 1, 1000);
-		HAL_SPI_Receive(hspi_, adc_mag, 7, 1000);
+		r = HAL_SPI_Receive(hspi_, adc_mag, 7, 1000);
+		if( r == HAL_OK ) {
+			SPI_connection_flag_ = true;
+		} else {
+			SPI_connection_flag_ = false;
+		}
 		IMU_SPI_CS_H;
 
 		hspi_->Instance->CR1 &= (uint32_t)(~SPI_BAUDRATEPRESCALER_256); //reset
@@ -418,6 +444,11 @@ void IMU::process (void)
 		mag_[0] = raw_mag_adc_[1] - mag_offset_[1];
 		mag_[1] = raw_mag_adc_[0]  - mag_offset_[0];
 		mag_[2] = -(raw_mag_adc_[2] - mag_offset_[2]);
+	}
+
+	/* if SPI connection is not valid, print error message */
+	if( !SPI_connection_flag_ ) {
+		debugPrint(std::string("[ERROR] SPI connection is not valid."));
 	}
 }
 
