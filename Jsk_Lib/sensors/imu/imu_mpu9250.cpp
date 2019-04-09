@@ -457,21 +457,26 @@ void IMU::imuConfigCallback(const std_msgs::UInt8& config_msg)
 	switch(config_msg.data)
 	{
 	case RESET_CALIB_CMD:
+		debugPrint(std::string("[INFO] RESET_CALIB_CMD received. All offset values are set to 0."));
 		acc_offset_.zero();
 		gyro_offset_.zero();
 		mag_offset_.zero();
 		break;
 	case MPU_ACC_GYRO_CALIB_CMD:
+		debugPrint(std::string("[INFO] MPU_ACC_GYRO_CALIB_CMD received. Acc and Gyro are calibrated."));
 		calibrate_gyro_ = CALIBRATING_STEP;
 		calibrate_acc_ = CALIBRATING_STEP;
 		break;
 	case MPU_MAG_CALIB_CMD:
+		debugPrint(std::string("[INFO] MPU_MAG_CALIB_CMD received. Mag is calibrated."));
 		calibrate_mag_ = CALIBRATING_MAG_STEP;
 		break;
 	case MPU_CALIB_LOAD_CMD:
+		debugPrint(std::string("[INFO] MPU_CALIB_LOAD_CMD received."));
 		readCalibData();
 		break;
 	case MPU_CALIB_SAVE_CMD:
+		debugPrint(std::string("[INFO] MPU_CALIB_SAVE_CMD received."));
 		writeCalibData();
 		break;
 	}
@@ -593,6 +598,6 @@ uint8_t IMU::getIMUFIFOMode()
 void IMU::debugPrint(const std::string& message)
 {
 	imu_debug_msg_.stamp = nh_->now();
-	imu_debug_msg_.data = message;
+	imu_debug_msg_.data = message.c_str();
 	imu_debug_pub_->publish(&imu_debug_msg_);
 }

@@ -19,6 +19,7 @@
 /* ros */
 #include <ros.h>
 #include <std_msgs/UInt8.h>
+#include <jsk_imu_mini_msgs/Debug.h>
 #include <sensors/sensor.h>
 #include <stm32f4xx_hal_flash_ex.h>
 
