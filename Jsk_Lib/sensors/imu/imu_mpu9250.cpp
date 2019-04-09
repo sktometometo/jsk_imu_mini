@@ -94,25 +94,16 @@ void IMU::readCalibData()
 		FLASH->CR &= (~FLASH_CR_PG);
 	}
 
-	/* set 0 to offset values when it is Nan */
-	bool nanFlag = false;
-	for(int i = 0; i < 3; i++) {
-		if( this->acc_offset_[i] != this->acc_offset_[i] ) {
-			this->acc_offset_[i] = 0;
-			nanFlag = true;
-		}
-		if( this->gyro_offset_[i] != this->gyro_offset_[i] ) {
-			this->gyro_offset_[i] = 0;
-			nanFlag = true;
-		}
-		if( this->mag_offset_[i] != this->mag_offset_[i] ) {
-			this->mag_offset_[i] = 0;
-			nanFlag = true;
-		}
-	}
-
-	if( nanFlag ) {
-		this->debugPrint(std::string("[ERROR]Internal flashed calibration offsets include NaN value. 0 is used instead."));
+	if( this->acc_offset_[0] != this->acc_offset_[0]   ||
+            this->acc_offset_[1] != this->acc_offset_[1]   ||
+            this->acc_offset_[2] != this->acc_offset_[2]   ||
+            this->gyro_offset_[0] != this->gyro_offset_[0] ||
+            this->gyro_offset_[1] != this->gyro_offset_[1] ||
+            this->gyro_offset_[2] != this->gyro_offset_[2] ||
+            this->mag_offset_[0] != this->mag_offset_[0]   ||
+            this->mag_offset_[1] != this->mag_offset_[1]   ||
+            this->mag_offset_[2] != this->mag_offset_[2] ) {
+		this->debugPrint(std::string("[ERROR]Internal flashed calibration offsets include NaN value."));
 	}
 }
 
