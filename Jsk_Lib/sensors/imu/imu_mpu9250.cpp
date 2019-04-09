@@ -470,6 +470,9 @@ void IMU::imuConfigCallback(const std_msgs::UInt8& config_msg)
 		debugPrint(std::string("[INFO] MPU_CALIB_SAVE_CMD received."));
 		writeCalibData();
 		break;
+    default:
+        debugPrint(std::string("[ERROR] Unknown command received."));
+    	break;
 	}
 }
 
