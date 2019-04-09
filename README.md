@@ -65,7 +65,7 @@ $ rostopic pub -1 <topic name of imu_config_cmd> std_msgs/UInt8 "data: 4"
 
 You can reboot the jsk_imu_mini board with a button shown in a picture below.
 
-![reset_button](TODO)
+![reset_button](./image/jsk_imu_mini_reset.png)
 
 And you can see whether there is a problem with the board by subscribing /debug topic.
 ```
