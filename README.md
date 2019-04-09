@@ -2,6 +2,7 @@
 This circuit can publish IMU data and 4 ADC channel data.
 
 ## Depending on
+* rosserial_client
 * rosserial_server
 * TrueSTUDIO
 
