@@ -2,22 +2,16 @@
 
 DIRECTORY_MAIN=$(rospack find jsk_imu_mini_firmware)
 DIRECTORY_ROS_LIB=$DIRECTORY_MAIN/ros_lib/
-DIRECTORY_TEMP=$DIRECTORY_MAIN/temp
 
 # 古いバージョンの消去
-rm -rf $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs
+if [ -e $DIRECTORY_ROS_LIB ]; then
+    rm -rf $DIRECTORY_ROS_LIB/*
+else
+    mkdir $DIRECTORY_ROS_LIB
+fi
 
 # msgファイルなどのbuild
 catkin build jsk_imu_mini_msgs
 
 # headerの生成
-mkdir $DIRECTORY_TEMP
-cd $DIRECTORY_TEMP
-rosrun rosserial_client make_libraries .
-
-# ros_libのコピー
-cp -r $DIRECTORY_TEMP/ros_lib $DIRECTORY_ROS_LIB/
-
-# 一時ファイルの削除
-cd ../
-rm -rf temp/
+rosrun jsk_imu_mini_firmware make_libraries.py $DIRECTORY_ROS_LIB
