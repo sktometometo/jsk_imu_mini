@@ -1,0 +1,53 @@
+#ifndef _ROS_roseus_smach_Sub5Action_h
+#define _ROS_roseus_smach_Sub5Action_h
+
+#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+#include "ros/msg.h"
+#include "roseus_smach/Sub5ActionGoal.h"
+#include "roseus_smach/Sub5ActionResult.h"
+#include "roseus_smach/Sub5ActionFeedback.h"
+
+namespace roseus_smach
+{
+
+  class Sub5Action : public ros::Msg
+  {
+    public:
+      roseus_smach::Sub5ActionGoal action_goal;
+      roseus_smach::Sub5ActionResult action_result;
+      roseus_smach::Sub5ActionFeedback action_feedback;
+
+    Sub5Action():
+      action_goal(),
+      action_result(),
+      action_feedback()
+    {
+    }
+
+    virtual int serialize(unsigned char *outbuffer) const
+    {
+      int offset = 0;
+      offset += this->action_goal.serialize(outbuffer + offset);
+      offset += this->action_result.serialize(outbuffer + offset);
+      offset += this->action_feedback.serialize(outbuffer + offset);
+      return offset;
+    }
+
+    virtual int deserialize(unsigned char *inbuffer)
+    {
+      int offset = 0;
+      offset += this->action_goal.deserialize(inbuffer + offset);
+      offset += this->action_result.deserialize(inbuffer + offset);
+      offset += this->action_feedback.deserialize(inbuffer + offset);
+     return offset;
+    }
+
+    const char * getType(){ return "roseus_smach/Sub5Action"; };
+    const char * getMD5(){ return "649e5cd3d0369bfd72c1f24aed2b51ea"; };
+
+  };
+
+}
+#endif
