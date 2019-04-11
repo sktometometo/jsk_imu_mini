@@ -42,6 +42,7 @@ It requires the location of your SWSTM32 project folder.
 rosrun rosserial_stm32 make_libraries.py <output_path>
 """
 
+import os
 import rospkg
 import rosserial_client
 from rosserial_client.make_library import *
@@ -75,9 +76,7 @@ if (len(sys.argv) < 2):
     exit()
     
 # get output path
-path = sys.argv[1]
-if path[-1] == "/":
-    path = path[0:-1]
+path = os.path.abspath( sys.argv[1] ) + "/"
 print "\nExporting to %s" % path
 
 rospack = rospkg.RosPack()
