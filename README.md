@@ -1,15 +1,17 @@
 # The mini jsk_imu hardware firmware repository
 This circuit can publish IMU data and 4 ADC channel data.
 
-## Depending on
-* rosserial_client
+## Requirements
+* [rosserial_stm32](https://github.com/yoneken/rosserial_stm32)
 * rosserial_server
-* TrueSTUDIO
+* [TrueSTUDIO](https://atollic.com/truestudio/)
 
-## How to use
+## Usage
 ```
 # build jsk_imu_mini_msgs and generate ros libraries for stm
-$ ./refresh_roslib.sh
+$ catkin build jsk_imu_mini_firmware
+$ source ~/catkin_ws/devel/setup.bash
+$ rosrun jsk_imu_mini_firmware refresh_roslib.sh
 
 
 # build and write firmware via TrueSTUDIO
@@ -38,6 +40,12 @@ $ rostopic pub -1 <topic name of imu_config_cmd> std_msgs/UInt8 "data: 4"
 
 # set a coord to the board
 $ rostopic pub -1 <topic name of desire_coordinate> jsk_imu_mini_msgs/DesireCoord "roll: 0.0 pitch: 0.0 yaw: 0.0 coord_type: 0" 
+
+
+# launch rpy sample program
+$ catkin build jsk_imu_mini_demo
+$ source ~/catkin_ws/devel/setup.bash
+$ roslaunch jsk_imu_mini_demo sample_rpy_printer.launch
 ```
 
 ## Notice
