@@ -26,8 +26,11 @@ catkin build jsk_imu_mini_msgs
 rosrun rosserial_client make_libraries $DIRECTORY_TEMP
 
 # 新しいファイル類の移動
-cp -r $DIRECTORY_TEMP/ros_lib/ros $DIRECTORY_ROS_LIB/ros
 cp -r $DIRECTORY_TEMP/ros_lib/jsk_imu_mini_msgs $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs
+cp -r $DIRECTORY_TEMP/ros_lib/ros $DIRECTORY_ROS_LIB/ros
+cp -r $DIRECTORY_TEMP/ros_lib/nav_msgs $DIRECTORY_ROS_LIB/nav_msgs
+cp -r $DIRECTORY_TEMP/ros_lib/std_msgs $DIRECTORY_ROS_LIB/std_msgs
+cp -r $DIRECTORY_TEMP/ros_lib/geometry_msgs $DIRECTORY_ROS_LIB/geometry_msgs
 
 # 一時ディレクトリの削除
 if [ -e $DIRECTORY_TEMP ]; then
