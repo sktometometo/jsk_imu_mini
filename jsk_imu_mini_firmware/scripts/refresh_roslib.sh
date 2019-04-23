@@ -10,12 +10,14 @@ if [ ! -e $DIRECTORY_TEMP ]; then
 fi
 
 # 古いバージョンの消去
-if [ -e $DIRECTORY_ROS_LIB/ros ]; then
-    rm -rf $DIRECTORY_ROS_LIB/ros
-fi
-if [ -e $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs ]; then
-    rm -rf $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs
-fi
+# if [ -e $DIRECTORY_ROS_LIB/ros ]; then
+#     rm -rf $DIRECTORY_ROS_LIB/ros
+# fi
+# if [ -e $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs ]; then
+#     rm -rf $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs
+# fi
+#
+# ros_lib/ros/subscriber.h に subscriber2が追加されているため,古いバージョンを削除しないように変更
 
 # msgファイルなどのbuild
 catkin build jsk_imu_mini_msgs
