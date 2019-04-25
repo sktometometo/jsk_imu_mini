@@ -2,7 +2,7 @@
 This circuit can publish IMU data and 4 ADC channel data.
 
 ## Requirements
-* [rosserial_stm32](https://github.com/yoneken/rosserial_stm32)
+* rosserial_client
 * rosserial_server
 * [TrueSTUDIO](https://atollic.com/truestudio/)
 
