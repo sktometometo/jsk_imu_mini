@@ -17,9 +17,11 @@ $ rosrun jsk_imu_mini_firmware refresh_roslib.sh
 
 
 # build and write firmware via TrueSTUDIO
-## build and write firmware
+## build firmware
 $ roscd jsk_imu_mini_firmware
 $ make
+## connect with openocd
+$ cd <openocd directory>
 $ openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg
 ## open another terminal
 $ roscd jsk_imu_mini_firmware
