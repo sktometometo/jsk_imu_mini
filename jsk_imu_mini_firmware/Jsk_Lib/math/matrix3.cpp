@@ -20,7 +20,7 @@
 #ifdef __arm
 #pragma O3
 #else
-#error "this is arm compiler"
+// #error "this is arm compiler"
 #pragma GCC optimize("O3")
 #endif
 
