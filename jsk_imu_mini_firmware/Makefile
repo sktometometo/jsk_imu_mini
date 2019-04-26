@@ -36,16 +36,6 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
-Src/main.c \
-Src/gpio.c \
-Src/adc.c \
-Src/dma.c \
-Src/i2c.c \
-Src/iwdg.c \
-Src/spi.c \
-Src/usart.c \
-Src/stm32f4xx_it.c \
-Src/stm32f4xx_hal_msp.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c \
@@ -68,7 +58,27 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
-Src/system_stm32f4xx.c  
+Src/system_stm32f4xx.c \
+Src/main.c \
+Src/gpio.c \
+Src/adc.c \
+Src/dma.c \
+Src/i2c.c \
+Src/iwdg.c \
+Src/spi.c \
+Src/usart.c \
+Src/stm32f4xx_it.c \
+Src/stm32f4xx_hal_msp.c \
+$(wildcard ros_lib/*.c)
+
+# CPP sources
+CPP_SOURCES = \
+Src/main.cpp \
+Jsk_Lib/sensors/imu/imu_mpu9250.cpp \
+Jsk_Lib/math/AP_Math.cpp \
+Jsk_Lib/math/vector3.cpp \
+Jsk_Lib/math/matrix3.cpp \
+$(wildcard ros_lib/*.cpp)	     
 
 # ASM sources
 ASM_SOURCES =  \
