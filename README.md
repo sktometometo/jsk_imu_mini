@@ -4,7 +4,9 @@ This circuit can publish IMU data and 4 ADC channel data.
 ## Requirements
 * rosserial_client
 * rosserial_server
-* [TrueSTUDIO](https://atollic.com/truestudio/)
+* openocd
+* STLink-Driver
+* GCC ARM Toolchain
 
 ## Usage
 ```
@@ -15,11 +17,19 @@ $ rosrun jsk_imu_mini_firmware refresh_roslib.sh
 
 
 # build and write firmware via TrueSTUDIO
+## build and write firmware
+$ roscd jsk_imu_mini_firmware
+$ make
+$ openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg
+## open another terminal
+$ roscd jsk_imu_mini_firmware
+$ telnet localhost 4444
+> reset halt
+> flash write_image erase ./build/jsk_imu_mini.elf
 
 
 # connect via rosserial and publish messages
 $ rosrun rosserial_server serial_node _baud:=921600 _port:=<serial port>
-
 
 # calibration command
 ## set 0 to acc, gyro and mag calibration offset
