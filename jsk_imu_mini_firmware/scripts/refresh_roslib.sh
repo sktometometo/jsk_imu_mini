@@ -9,16 +9,6 @@ if [ ! -e $DIRECTORY_TEMP ]; then
     mkdir $DIRECTORY_TEMP
 fi
 
-# 古いバージョンの消去
-# if [ -e $DIRECTORY_ROS_LIB/ros ]; then
-#     rm -rf $DIRECTORY_ROS_LIB/ros
-# fi
-# if [ -e $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs ]; then
-#     rm -rf $DIRECTORY_ROS_LIB/jsk_imu_mini_msgs
-# fi
-#
-# ros_lib/ros/subscriber.h に subscriber2が追加されているため,古いバージョンを削除しないように変更
-
 # msgファイルなどのbuild
 catkin build jsk_imu_mini_msgs
 
@@ -27,10 +17,6 @@ rosrun rosserial_client make_libraries $DIRECTORY_TEMP
 
 # 新しいファイル類の移動
 cp -r $DIRECTORY_TEMP/ros_lib/jsk_imu_mini_msgs $DIRECTORY_ROS_LIB
-cp -r $DIRECTORY_TEMP/ros_lib/ros $DIRECTORY_ROS_LIB
-cp -r $DIRECTORY_TEMP/ros_lib/nav_msgs $DIRECTORY_ROS_LIB
-cp -r $DIRECTORY_TEMP/ros_lib/std_msgs $DIRECTORY_ROS_LIB
-cp -r $DIRECTORY_TEMP/ros_lib/geometry_msgs $DIRECTORY_ROS_LIB
 
 # 一時ディレクトリの削除
 if [ -e $DIRECTORY_TEMP ]; then
