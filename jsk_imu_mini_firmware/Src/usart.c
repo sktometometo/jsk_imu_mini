@@ -43,7 +43,7 @@ void MX_USART1_UART_Init(void)
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   if (HAL_UART_Init(&huart1) != HAL_OK)
   {
-    Error_Handler();
+    _Error_Handler(__FILE__, __LINE__);
   }
 
 }
@@ -89,7 +89,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     hdma_usart1_rx.Init.PeriphBurst = DMA_PBURST_SINGLE;
     if (HAL_DMA_Init(&hdma_usart1_rx) != HAL_OK)
     {
-      Error_Handler();
+      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(uartHandle,hdmarx,hdma_usart1_rx);
@@ -107,7 +107,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     hdma_usart1_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_usart1_tx) != HAL_OK)
     {
-      Error_Handler();
+      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart1_tx);

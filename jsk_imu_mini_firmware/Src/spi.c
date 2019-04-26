@@ -44,7 +44,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.CRCPolynomial = 15;
   if (HAL_SPI_Init(&hspi1) != HAL_OK)
   {
-    Error_Handler();
+    _Error_Handler(__FILE__, __LINE__);
   }
 
 }
