@@ -45,7 +45,7 @@ $ rostopic pub -1 <topic name of desire_coordinate> jsk_imu_mini_msgs/DesireCoor
 # launch rpy sample program
 $ catkin build jsk_imu_mini_demo
 $ source ~/catkin_ws/devel/setup.bash
-$ roslaunch jsk_imu_mini_demo sample_rpy_printer.launch
+$ roslaunch jsk_imu_mini_demo sample_rpy_publisher.launch
 ```
 
 ## Notice
