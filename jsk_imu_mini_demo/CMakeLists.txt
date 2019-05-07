@@ -16,10 +16,10 @@ include_directories(
 )
 
 add_executable(
-    sample_rpy_printer
-    src/sample_rpy_printer.cpp
+    sample_rpy_publisher
+    src/sample_rpy_publisher.cpp
 )
 target_link_libraries(
-    sample_rpy_printer
+    sample_rpy_publisher
     ${catkin_LIBRARIES}
 )

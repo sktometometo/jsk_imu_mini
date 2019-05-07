@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     std::string topicname_quaternion(argv[1]);
     std::string frame_id(argv[2]);
 
-    ros::init( argc, argv, "rpy_printer" );
+    ros::init( argc, argv, "rpy_publisher" );
     ros::NodeHandle nh;
 
     marker_pub = nh.advertise<visualization_msgs::Marker>("imu_marker",1);
