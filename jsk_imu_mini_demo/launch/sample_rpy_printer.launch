@@ -4,6 +4,7 @@
         <param name="baud" value="921600" />
         <param name="port" value="/dev/ttyUSB0" />
     </node>
+    <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
     <node pkg="jsk_imu_mini_demo" name="sample_rpy_printer" type="sample_rpy_printer" output="screen"
         args="/imu" />
 </launch>
