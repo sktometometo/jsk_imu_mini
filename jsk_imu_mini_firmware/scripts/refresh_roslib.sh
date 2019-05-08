@@ -17,6 +17,9 @@ rosrun rosserial_client make_libraries $DIRECTORY_TEMP
 
 # 新しいファイル類の移動
 cp -r $DIRECTORY_TEMP/ros_lib/jsk_imu_mini_msgs $DIRECTORY_ROS_LIB
+cp -r $DIRECTORY_TEMP/ros_lib/rosserial_msgs $DIRECTORY_ROS_LIB
+cp -r $DIRECTORY_TEMP/ros_lib/geometry_msgs $DIRECTORY_ROS_LIB
+cp -r $DIRECTORY_TEMP/ros_lib/std_msgs $DIRECTORY_ROS_LIB
 
 # 一時ディレクトリの削除
 if [ -e $DIRECTORY_TEMP ]; then
