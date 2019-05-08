@@ -1,9 +1,0 @@
-<launch>
-    <param name="devport" value="/dev/ttyUSB0" />
-    <node pkg="rosserial_server" name="serial_node" type="serial_node" output="screen" >
-        <param name="baud" value="921600" />
-        <param name="port" value="/dev/ttyUSB0" />
-    </node>
-    <node pkg="jsk_imu_mini_demo" name="sample_rpy_printer" type="sample_rpy_printer" output="screen"
-        args="/imu" />
-</launch>
