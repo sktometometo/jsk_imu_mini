@@ -108,10 +108,10 @@ public:
             imu_msg_.acc_data[i] = imu_->getAcc()[i];
           }
 
-      	imu_msg_.orientation.x = estimator_->getQuaternion()[0];
-      	imu_msg_.orientation.y = estimator_->getQuaternion()[1];
-      	imu_msg_.orientation.z = estimator_->getQuaternion()[2];
-      	imu_msg_.orientation.w = estimator_->getQuaternion()[3];
+      	imu_msg_.orientation.x = estimator_->getQuaternion()[1];
+      	imu_msg_.orientation.y = estimator_->getQuaternion()[2];
+      	imu_msg_.orientation.z = estimator_->getQuaternion()[3];
+      	imu_msg_.orientation.w = estimator_->getQuaternion()[0];
 
         imu_pub_->publish(&imu_msg_);
       }
