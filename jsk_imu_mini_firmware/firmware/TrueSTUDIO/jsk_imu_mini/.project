@@ -170,7 +170,7 @@
 		<link>
 			<name>Application/imu/imu_mpu9250.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Jsk_Lib/sensors/imu/imu_mpu9250.cpp</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Jsk_Lib/imu/imu_mpu9250.cpp</locationURI>
 		</link>
 		<link>
 			<name>Application/ros/duration.cpp</name>
