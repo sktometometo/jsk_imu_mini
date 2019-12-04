@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
-* File Name          : attitude_estimate.h
-* Description        : attitude estimate interface
+* File Name          : attitude_estimator.h
+* Description        : attitude estimator interface
 ******************************************************************************
 */
 
@@ -29,8 +29,8 @@
 #include "sensors/imu/imu_mpu9250.h"
 
 /* estiamtor algorithm */
-#include "state_estimate/attitude/complementary_ahrs.h"
-#include "state_estimate/attitude/madgwick_ahrs.h"
+#include "attitude_estimator/complementary_ahrs.h"
+#include "attitude_estimator/madgwick_ahrs.h"
 
 #define COMPLEMENTARY 1
 #define MADWICK 2
@@ -38,11 +38,11 @@
 /* please change the algorithm type according to your application */
 #define ESTIMATE_TYPE COMPLEMENTARY
 
-class AttitudeEstimate
+class AttitudeEstimator
 {
 public:
-  AttitudeEstimate(){}
-  ~AttitudeEstimate(){}
+  AttitudeEstimator(){}
+  ~AttitudeEstimator(){}
 
 
   static const uint8_t PUB_PRESCALER = 1;
@@ -57,8 +57,8 @@ public:
     imu_pub_  = new ros::Publisher("imu", &imu_msg_);
     nh_->advertise(*imu_pub_);
 
-    desire_coord_sub_ = new ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimate> ("/desire_coordinate", &AttitudeEstimate::desireCoordCallback, this );
-    nh_->subscribe<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimate>(*desire_coord_sub_);
+    desire_coord_sub_ = new ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator> ("/desire_coordinate", &AttitudeEstimator::desireCoordCallback, this );
+    nh_->subscribe<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>(*desire_coord_sub_);
 
     imu_ = imu;
 
@@ -129,7 +129,7 @@ public:
   ros::NodeHandle* nh_;
   ros::Publisher* imu_pub_;
   jsk_imu_mini_msgs::Imu imu_msg_;
-  ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimate>* desire_coord_sub_;
+  ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>* desire_coord_sub_;
 
 
   EstimatorAlgorithm* estimator_;
