@@ -11,7 +11,7 @@
 #include <geometry_msgs/Twist.h>
 #include <jsk_imu_mini_msgs/Potentio.h>
 /* inlcude ros related class */
-#include <sensors/imu/imu_mpu9250.h>
+#include <imu/imu_mpu9250.h>
 
 class RosNode
 {

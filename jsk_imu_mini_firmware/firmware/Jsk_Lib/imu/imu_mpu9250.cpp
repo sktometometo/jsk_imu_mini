@@ -9,7 +9,7 @@
 #error "Please define __cplusplus, because this is a c++ based file "
 #endif
 
-#include "sensors/imu/imu_mpu9250.h"
+#include "imu/imu_mpu9250.h"
 
 IMU::IMU(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
 {

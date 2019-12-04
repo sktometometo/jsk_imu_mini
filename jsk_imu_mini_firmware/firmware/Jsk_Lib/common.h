@@ -11,7 +11,7 @@
 /* jsk_imu_mini_library */
 #include <rosnode.h>
 #include "config.h"
-#include "sensors/imu/imu_mpu9250.h"
+#include "imu/imu_mpu9250.h"
 #include "attitude_estimator/attitude_estimator.h"
 
 /* ros related */

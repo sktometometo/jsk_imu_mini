@@ -26,7 +26,7 @@
 ////////////////////////////////////////
 //TODO: should include the super class//
 ////////////////////////////////////////
-#include "sensors/imu/imu_mpu9250.h"
+#include "imu/imu_mpu9250.h"
 
 /* estiamtor algorithm */
 #include "attitude_estimator/complementary_ahrs.h"
