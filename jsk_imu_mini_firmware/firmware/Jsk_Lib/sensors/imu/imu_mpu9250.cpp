@@ -49,53 +49,11 @@ uint16_t IMU::update(uint16_t queue_size)
 	if(nh_->connected() && (!nh_->getHardware()->getUartDriver()->getTx()->idleFlag()))
 		ahb_suspend_flag_ = true; //should suspend USART1 of DMA(ros) for a while
 
-//	if(ahb_suspend_flag_)
-//	{
-//		UART_HandleTypeDef *huart = nh_->getHardware()->getUartDriver()->getHuart();
-//		HAL_DMA_Abort(huart->hdmatx); //suspend the dma first(please note that TCIF of DMATx is set because of suspension)
-//
-//		uint8_t temp_length = nh_->getHardware()->getUartDriver()->getTx()->getCurrentTransmitBufferLen();
-//		uint8_t temp_length2 = huart->hdmatx->Instance->NDTR;
-//		uint8_t* temp_p = nh_->getHardware()->getUartDriver()->getTx()->getCurrentTransmitBufferP() + (temp_length - temp_length2);
-//		uint32_t *tmp32 = (uint32_t*)&temp_p;
-//		huart->hdmatx->Instance->M0AR = *(uint32_t*)tmp32;
-//		huart->hdmatx->Instance->NDTR = temp_length2;
-//	}
-
 	read(); //read from SPI
-
-//	if(ahb_suspend_flag_)
-//	{
-//		UART_HandleTypeDef *huart = nh_->getHardware()->getUartDriver()->getHuart();
-//		__HAL_DMA_CLEAR_FLAG(huart->hdmatx, __HAL_DMA_GET_TC_FLAG_INDEX(huart->hdmatx)); // this should come before __HAL_DMA_ENABLE!!
-//		__HAL_DMA_ENABLE(huart->hdmatx);
-//		//__HAL_DMA_CLEAR_FLAG(huart_->hdmatx, __HAL_DMA_GET_TC_FLAG_INDEX(huart_->hdmatx)); => should not be after the hal_dma_enable!!(lot of 1 exceed the message frame)
-//
-//		ahb_suspend_flag_ = false; //finish suspension
-//	}
 
 	process();
 
 	update_ = true;
-	//chen 0526 add imu data buffer  // now too heavy for stm32f4
-//	if(data_queue.size())
-//	{
-//		Imugyro tmpvelo = getGyro();
-//		tmpvelo -= data_queue.back();
-//		gyroacc_quene.push_back(tmpvelo);
-//	}
-//	data_queue.push_back(getGyro());
-//	if(data_queue.size()>queue_size)
-//	{
-//		data_queue.erase(data_queue.begin());
-//		ave_gyro = Average_vec(&data_queue);
-//	}
-//	if(gyroacc_quene.size()>queue_size)
-//	{
-//		gyroacc_quene.erase(gyroacc_quene.begin());
-//		ave_gyroacc = Average_vec(&gyroacc_quene);
-//	}
-//	return data_queue.size();
 	return true;
 
 }
