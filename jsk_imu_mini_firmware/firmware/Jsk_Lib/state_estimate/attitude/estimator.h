@@ -37,23 +37,6 @@ public:
     desire_attitude_pitch_ = desire_attitude_pitch; 
 
     r_.from_euler(desire_attitude_roll_, desire_attitude_pitch_, 0);
-
-    /*
-    float32_t cos_roll = arm_cos_f32(desire_attitude_roll_);
-    float32_t sin_roll = arm_sin_f32(desire_attitude_roll_);
-    float32_t cos_pitch = arm_cos_f32(desire_attitude_pitch_);
-    float32_t sin_pitch = arm_sin_f32(desire_attitude_pitch_);
-
-    desire_attitude_r_[0] = cos_pitch;
-    desire_attitude_r_[1] = sin_pitch * sin_roll;
-    desire_attitude_r_[2] = sin_pitch * cos_roll;
-    desire_attitude_r_[3] = 0;
-    desire_attitude_r_[4] = cos_roll;
-    desire_attitude_r_[5] = -sin_roll;
-    desire_attitude_r_[6] = -sin_pitch;
-    desire_attitude_r_[7] = cos_pitch * sin_roll;
-    desire_attitude_r_[8] = cos_pitch * cos_roll;
-    */
   }
 
 
@@ -68,12 +51,6 @@ public:
     acc_v_ = r_* acc_b_;
     gyro_v_ = r_*  gyro_b_;
     mag_v_ = r_ * mag_b_;
-
-    /*
-    arm_mat_mult_f32(&desire_attitude_R_, &acc_b_vec_, &acc_v_vec_);
-    arm_mat_mult_f32(&desire_attitude_R_, &gyro_b_vec_, &gyro_v_vec_);
-    arm_mat_mult_f32(&desire_attitude_R_, &mag_b_vec_, &mag_v_vec_);
-    */
 
     estimation();
   }
@@ -98,15 +75,6 @@ public:
   Vector3f getMagV(){return mag_v_;} 
 
 protected:
-#if 0
-  arm_matrix_instance_f32 acc_b_vec_, gyro_b_vec_, mag_b_vec_; //sensor data in body frame
-  arm_matrix_instance_f32 acc_v_vec_, gyro_v_vec_, mag_v_vec_; //sensor data in virtual frame
-  float acc_b_[3], gyro_b_[3],  mag_b_[3];
-  float acc_v_[3], gyro_v_[3],  mag_v_[3]; //sensors data in virtual frame
-  arm_matrix_instance_f32 angle_vec_;
-  float angles_[3];
-  float rpy_[3];
-#endif
   Vector3f acc_b_, acc_v_;  
   Vector3f gyro_b_, gyro_v_;
   Vector3f mag_b_, mag_v_;
