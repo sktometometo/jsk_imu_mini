@@ -62,11 +62,12 @@ public:
 	//0x80xxxxxx is Bloc base addresse on AXIM interface(stmf7 manual P74)
 	// AXIM and TCIM share the same memory, but the addresses are different
 	//we don't need sector erase for the writing part here, please see L57 in attitude_estimate.c
-
 	static const uint32_t CALIB_DATA_SECTOR = FLASH_SECTOR_4;
-	static const uint8_t CALIB_DATA_LENGTH = 24;  //3 * 2 * 4, no need of gyro to save
+	static const uint8_t CALIB_DATA_LENGTH = 36;  //3 * 2 * 4, no need of gyro to save
 	static const uint8_t CALIB_ACC_ADDRESS = 0;
-	static const uint8_t CALIB_MAG_ADDRESS = 12;
+	static const uint8_t CALIB_GYRO_ADDRESS = 12;
+	static const uint8_t CALIB_MAG_ADDRESS = 24;
+
 	static const uint32_t CALIBRATING_STEP =  1000;
 	static const uint32_t CALIBRATING_MAG_STEP =  1200; //about 30s (0.01s * 3000; 0.001s * 30000)
 
