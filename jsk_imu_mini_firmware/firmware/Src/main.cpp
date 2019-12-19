@@ -93,15 +93,7 @@ void HAL_SYSTICK_Callback(void)
 		{
 			counter = 0;
 			imu_.update();
-//			estimator_.attitude_estimator_.imu_msg_.stamp = estimator_.attitude_estimator_.nh_->now();
-//			for(int i=0;i<3;i++)
-//			{
-//				estimator_.attitude_estimator_.imu_msg_.gyro_data[i] = estimator_.attitude_estimator_.imu_->getGyro()[i];
-//				estimator_.attitude_estimator_.imu_msg_.mag_data[i] = estimator_.attitude_estimator_.imu_->getMag()[i];
-//				estimator_.attitude_estimator_.imu_msg_.acc_data[i] = estimator_.attitude_estimator_.imu_->getAcc()[i];
-//			}
-//			estimator_.attitude_estimator_.imu_pub_->publish(&estimator_.attitude_estimator_.imu_msg_);
-			estimator_.update();
+			attitude_estimator_.update();
 
 		}
 	}
@@ -149,11 +141,9 @@ int main(void)
 	  /* ugv ros node */
 	  testnode = new RosNode(&nh_);
 	  /* Sensors */
-#if IMU_FLAG
 	  imu_.init(&hspi1, &nh_);
 	  /* State Estimation */
-	  estimator_.init(&imu_, NULL, NULL, &nh_);  // imu  => att
-#endif
+	  attitude_estimator_.init(&imu_, &nh_);  // imu  => att
 
 	  /* all process can start right now! */
 	  start_process_flag_ = true;

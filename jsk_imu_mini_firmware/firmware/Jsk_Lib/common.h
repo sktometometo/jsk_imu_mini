@@ -20,6 +20,6 @@ static RosNode *testnode;
 
 /* sensors */
 IMU imu_;
-AttitudeEstimator estimator_;
+AttitudeEstimator attitude_estimator_;
 
 #endif /*__ common_H */
