@@ -299,9 +299,12 @@ void IMU::process (void)
 		acc_offset_ += raw_acc_adc_;
 
 		if (calibrate_acc_ == 1) {
-			acc_offset_[0] /= (float)CALIBRATING_STEP;
-			acc_offset_[1] /= (float)CALIBRATING_STEP;
-			acc_offset_[2] =  acc_offset_[2]/(float)CALIBRATING_STEP - GRAVITY_MSS;
+                        acc_offset_[0] /= (float)CALIBRATING_STEP;
+                        acc_offset_[1] /= (float)CALIBRATING_STEP;
+                        acc_offset_[2] /= (float)CALIBRATING_STEP;
+                        Vector3f gravity_direction(acc_offset_[0],acc_offset_[1],acc_offset_[2]);
+                        gravity_direction.normalize();
+                        acc_offset_ -= gravity_direction * GRAVITY_MSS;
 
 			writeCalibData();
 		}
