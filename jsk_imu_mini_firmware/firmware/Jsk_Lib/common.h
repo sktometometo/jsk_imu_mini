@@ -13,6 +13,7 @@
 #include "config.h"
 #include "imu/imu_mpu9250.h"
 #include "attitude_estimator/attitude_estimator.h"
+#include "debug_printer/debug_printer.h"
 
 /* ros related */
 ros::NodeHandle  nh_;
@@ -21,5 +22,8 @@ static RosNode *testnode;
 /* sensors */
 IMU imu_;
 AttitudeEstimator attitude_estimator_;
+
+/* For debug */
+DebugPrinter debug_printer;
 
 #endif /*__ common_H */

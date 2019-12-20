@@ -144,6 +144,8 @@ int main(void)
 	  imu_.init(&hspi1, &nh_);
 	  /* State Estimation */
 	  attitude_estimator_.init(&imu_, &nh_);  // imu  => att
+          /* for debug */
+          debug_printer.init(&nh_);
 
 	  /* all process can start right now! */
 	  start_process_flag_ = true;
