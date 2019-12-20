@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS genmsg message_generation ${MSG_DEPS})
 
 set(MSG_FILES
   Imu.msg
+  Debug.msg
   DesireCoord.msg
   Potentio.msg
 )
