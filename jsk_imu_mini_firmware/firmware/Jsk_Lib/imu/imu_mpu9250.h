@@ -12,7 +12,13 @@
 #ifndef __IMU_H
 #define __IMU_H
 
+#include <vector>
+
+/* STM32HAL */
 #include "stm32f4xx_hal.h"
+#include <stm32f4xx_hal_flash_ex.h>
+
+/* jsk_imu_mini_library */
 #include "config.h"
 /* #include "arm_math.h" */
 #include "math/AP_Math.h"
@@ -20,8 +26,6 @@
 /* ros */
 #include <ros.h>
 #include <std_msgs/UInt8.h>
-#include <sensors/sensor.h>
-#include <stm32f4xx_hal_flash_ex.h>
 
 #define IMU_SPI_CS_H       HAL_GPIO_WritePin(GPIOB,GPIO_PIN_6,GPIO_PIN_SET)
 #define IMU_SPI_CS_L      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_6,GPIO_PIN_RESET)
@@ -34,9 +38,11 @@
 
 typedef Vector3f Imugyro ;
 
-class IMU : public SENSOR_<Imugyro>
+class IMU
 {
 public:
+        static const uint16_t DEFAULT_DATA_SIZE = 10;
+
 	IMU(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh);
 	IMU(){};
 	~IMU(){}

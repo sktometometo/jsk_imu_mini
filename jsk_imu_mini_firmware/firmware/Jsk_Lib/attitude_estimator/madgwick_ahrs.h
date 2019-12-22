@@ -11,7 +11,7 @@
 #ifndef __MADGWICK_AHRS_h
 #define __MADGWICK_AHRS_h
 
-#include "state_estimate/attitude/estimator.h"
+#include "attitude_estimator/estimator_algorithm.h"
 
 #define betaDef 0.1f // 2 * proportional gain
 #define ACC_GYRO 0

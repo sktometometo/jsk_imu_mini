@@ -12,7 +12,7 @@
 #ifndef __COMPLEMENTARY_AHRS_H
 #define __COMPLEMENTARY_AHRS_H
 
-#include "state_estimate/attitude/estimator.h"
+#include "attitude_estimator/estimator_algorithm.h"
 
 #define GYR_CMPF_FACTOR 60
 #define GYR_CMPFM_FACTOR 25

@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
-* File Name          : attitude_estimate.h
-* Description        : attitude estimate interface
+* File Name          : attitude_estimator.h
+* Description        : attitude estimator interface
 ******************************************************************************
 */
 
@@ -19,10 +19,6 @@
 
 /* ros */
 #include <ros.h>
-//#include <aerial_robot_msgs/Imu.h>
-//#include <aerial_robot_base/DesireCoord.h>
-//#include <kduino/Imu.h>
-//#include <kduino/DesireCoord.h>
 #include <jsk_imu_mini_msgs/Imu.h>
 #include <jsk_imu_mini_msgs/DesireCoord.h>
 
@@ -30,25 +26,23 @@
 ////////////////////////////////////////
 //TODO: should include the super class//
 ////////////////////////////////////////
-#include "sensors/imu/imu_mpu9250.h"
+#include "imu/imu_mpu9250.h"
 
 /* estiamtor algorithm */
-#include "state_estimate/attitude/complementary_ahrs.h"
-#include "state_estimate/attitude/madgwick_ahrs.h"
-//#include "state_estimate/attitude/mahony_ahrs.h"
+#include "attitude_estimator/complementary_ahrs.h"
+#include "attitude_estimator/madgwick_ahrs.h"
 
 #define COMPLEMENTARY 1
 #define MADWICK 2
-//#define MAHONY 3
 
 /* please change the algorithm type according to your application */
 #define ESTIMATE_TYPE COMPLEMENTARY
 
-class AttitudeEstimate
+class AttitudeEstimator
 {
 public:
-  AttitudeEstimate(){}
-  ~AttitudeEstimate(){}
+  AttitudeEstimator(){}
+  ~AttitudeEstimator(){}
 
 
   static const uint8_t PUB_PRESCALER = 1;
@@ -63,10 +57,8 @@ public:
     imu_pub_  = new ros::Publisher("imu", &imu_msg_);
     nh_->advertise(*imu_pub_);
 
-    //desire_coord_sub_ = new ros::Subscriber2<aerial_robot_base::DesireCoord, AttitudeEstimate> ("/desire_coordinate", &AttitudeEstimate::desireCoordCallback, this );
-    //nh_->subscribe<aerial_robot_base::DesireCoord, AttitudeEstimate>(*desire_coord_sub_);
-    desire_coord_sub_ = new ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimate> ("/desire_coordinate", &AttitudeEstimate::desireCoordCallback, this );
-    nh_->subscribe<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimate>(*desire_coord_sub_);
+    desire_coord_sub_ = new ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator> ("/desire_coordinate", &AttitudeEstimator::desireCoordCallback, this );
+    nh_->subscribe<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>(*desire_coord_sub_);
 
     imu_ = imu;
 
@@ -136,10 +128,8 @@ public:
 //private:
   ros::NodeHandle* nh_;
   ros::Publisher* imu_pub_;
-  //aerial_robot_msgs::Imu imu_msg_;
-  //ros::Subscriber2<aerial_robot_base::DesireCoord, AttitudeEstimate>* desire_coord_sub_;
   jsk_imu_mini_msgs::Imu imu_msg_;
-  ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimate>* desire_coord_sub_;
+  ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>* desire_coord_sub_;
 
 
   EstimatorAlgorithm* estimator_;
@@ -147,7 +137,6 @@ public:
 
   uint32_t last_pub_time_;
 
-  //void desireCoordCallback(const aerial_robot_base::DesireCoord& coord_msg)
   void desireCoordCallback(const jsk_imu_mini_msgs::DesireCoord& coord_msg)
   {
     estimator_->coordinateUpdate(coord_msg.roll, coord_msg.pitch);
