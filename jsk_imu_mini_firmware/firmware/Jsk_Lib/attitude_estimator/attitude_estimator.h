@@ -24,7 +24,7 @@
 
 /* sensors */
 ////////////////////////////////////////
-//TODO: should include the super class//
+// TODO: should include the super class//
 ////////////////////////////////////////
 #include "imu/imu_mpu9250.h"
 
@@ -41,23 +41,27 @@
 class AttitudeEstimator
 {
 public:
-  AttitudeEstimator(){}
-  ~AttitudeEstimator(){}
-
+  AttitudeEstimator()
+  {
+  }
+  ~AttitudeEstimator()
+  {
+  }
 
   static const uint8_t PUB_PRESCALER = 1;
-  //This is hHard coding, 1000Hz /2 = 500Hz
+  // This is hHard coding, 1000Hz /2 = 500Hz
 
-  static const uint8_t PUB_HZ = 2; // 500Hz
+  static const uint8_t PUB_HZ = 2;  // 500Hz
 
   void init(IMU* imu, ros::NodeHandle* nh)
   {
     nh_ = nh;
 
-    imu_pub_  = new ros::Publisher("imu", &imu_msg_);
+    imu_pub_ = new ros::Publisher("imu", &imu_msg_);
     nh_->advertise(*imu_pub_);
 
-    desire_coord_sub_ = new ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator> ("/desire_coordinate", &AttitudeEstimator::desireCoordCallback, this );
+    desire_coord_sub_ = new ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>(
+        "/desire_coordinate", &AttitudeEstimator::desireCoordCallback, this);
     nh_->subscribe<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>(*desire_coord_sub_);
 
     imu_ = imu;
@@ -68,69 +72,73 @@ public:
     estimator_ = new ComplementaryAHRS();
 #elif ESTIMATE_TYPE == MADWICK
     estimator_ = new MadgwickAHRS();
-#else 
+#else
 #error "no instance for estimator"
 #endif
   }
 
   void update()
   {
+    if (imu_->getUpdate())
+    {
+      /* attitude estimation */
+      if (!imu_->getCalibrated())
+        return;
+      estimator_->update(imu_->getGyro(), imu_->getAcc(), imu_->getMag());
 
-    if(imu_->getUpdate())
-      {
-        /* attitude estimation */
-        if(!imu_->getCalibrated()) return;
-        estimator_->update(imu_->getGyro(), imu_->getAcc(), imu_->getMag());
+      /* send message to ros*/
+      if (nh_->connected())
+        publish();
 
-        /* send message to ros*/
-        if(nh_->connected())  publish();
-
-        /* reset update status of imu*/
-        imu_->setUpdate(false);
-      }
-
+      /* reset update status of imu*/
+      imu_->setUpdate(false);
+    }
   }
 
   /* send message via ros protocal */
   void publish()
   {
     uint32_t now_time = HAL_GetTick();
-    if( now_time - last_pub_time_ >= PUB_INTERVAL)
+    if (now_time - last_pub_time_ >= PUB_INTERVAL)
+    {
+      last_pub_time_ = now_time;
+      imu_msg_.stamp = nh_->now();
+      for (int i = 0; i < 3; i++)
       {
-        last_pub_time_ = now_time;
-        imu_msg_.stamp = nh_->now();
-        for(int i = 0; i < 3 ; i ++)
-          {
-#if 0 //virtual coord
+#if 0  // virtual coord
             imu_msg_.gyro_data[i] = estimator_->getGyroV()[i];
             imu_msg_.mag_data[i] = estimator_->getMagV()[i];
             imu_msg_.acc_data[i] = estimator_->getAccV()[i];
-#else //raw data
-            imu_msg_.gyro_data[i] = imu_->getGyro()[i];
-            imu_msg_.mag_data[i] = imu_->getMag()[i];
-            imu_msg_.acc_data[i] = imu_->getAcc()[i];
+#else  // raw data
+        imu_msg_.gyro_data[i] = imu_->getGyro()[i];
+        imu_msg_.mag_data[i] = imu_->getMag()[i];
+        imu_msg_.acc_data[i] = imu_->getAcc()[i];
 #endif
-            imu_msg_.angles[i] = estimator_->getAngles()[i];
-          }
-
-        imu_pub_->publish(&imu_msg_);
+        imu_msg_.angles[i] = estimator_->getAngles()[i];
       }
+
+      imu_pub_->publish(&imu_msg_);
+    }
   }
 
   /* receive message via ros protocal */
-  inline const Vector3f getAngles()  { return estimator_->getAngles(); }
+  inline const Vector3f getAngles()
+  {
+    return estimator_->getAngles();
+  }
 
-  inline const Vector3f getVels() { return estimator_->getVels(); }
-
+  inline const Vector3f getVels()
+  {
+    return estimator_->getVels();
+  }
 
   static const uint8_t PUB_INTERVAL = 2;
 
-//private:
+  // private:
   ros::NodeHandle* nh_;
   ros::Publisher* imu_pub_;
   jsk_imu_mini_msgs::Imu imu_msg_;
   ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>* desire_coord_sub_;
-
 
   EstimatorAlgorithm* estimator_;
   IMU* imu_;
@@ -141,7 +149,5 @@ public:
   {
     estimator_->coordinateUpdate(coord_msg.roll, coord_msg.pitch);
   }
-
-
 };
 #endif

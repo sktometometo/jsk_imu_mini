@@ -10,8 +10,7 @@
 #include "stm32f4xx_hal.h"
 
 // General Macros
-#define LED0_H       HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET)
-#define LED0_L      HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET)
+#define LED0_H HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET)
+#define LED0_L HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET)
 
-
-#endif //__CONFIG_H
+#endif  //__CONFIG_H

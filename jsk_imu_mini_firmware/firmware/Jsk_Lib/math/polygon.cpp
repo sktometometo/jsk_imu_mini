@@ -24,7 +24,6 @@
  *  http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
  */
 
-
 /*
  *  Polygon_outside(): test for a point in a polygon
  *     Input:   P = a point,
@@ -35,47 +34,62 @@
  *  expect that to be very small over the distances involved in the
  *  fence boundary
  */
-bool Polygon_outside(const Vector2l &P, const Vector2l *V, unsigned n)
+bool Polygon_outside(const Vector2l& P, const Vector2l* V, unsigned n)
 {
-    unsigned i, j;
-    bool outside = true;
-    for (i = 0, j = n-1; i < n; j = i++) {
-        if ((V[i].y > P.y) == (V[j].y > P.y)) {
-            continue;
-        }
-        int32_t dx1, dx2, dy1, dy2;
-        dx1 = P.x - V[i].x;
-        dx2 = V[j].x - V[i].x;
-        dy1 = P.y - V[i].y;
-        dy2 = V[j].y - V[i].y;
-        int8_t dx1s, dx2s, dy1s, dy2s, m1, m2;
-#define sign(x) ((x)<0 ? -1 : 1)
-        dx1s = sign(dx1);
-        dx2s = sign(dx2);
-        dy1s = sign(dy1);
-        dy2s = sign(dy2);
-        m1 = dx1s * dy2s;
-        m2 = dx2s * dy1s;
-        // we avoid the 64 bit multiplies if we can based on sign checks.
-        if (dy2 < 0) {
-            if (m1 > m2) {
-                outside = !outside;
-            } else if (m1 < m2) {
-                continue;
-            } else if ( dx1 * (int64_t)dy2 > dx2 * (int64_t)dy1 ) {
-                outside = !outside;
-            }
-        } else {
-            if (m1 < m2) {
-                outside = !outside;
-            } else if (m1 > m2) {
-                continue;
-            } else if ( dx1 * (int64_t)dy2 < dx2 * (int64_t)dy1 ) {
-                outside = !outside;
-            }
-        }
+  unsigned i, j;
+  bool outside = true;
+  for (i = 0, j = n - 1; i < n; j = i++)
+  {
+    if ((V[i].y > P.y) == (V[j].y > P.y))
+    {
+      continue;
     }
-    return outside;
+    int32_t dx1, dx2, dy1, dy2;
+    dx1 = P.x - V[i].x;
+    dx2 = V[j].x - V[i].x;
+    dy1 = P.y - V[i].y;
+    dy2 = V[j].y - V[i].y;
+    int8_t dx1s, dx2s, dy1s, dy2s, m1, m2;
+#define sign(x) ((x) < 0 ? -1 : 1)
+    dx1s = sign(dx1);
+    dx2s = sign(dx2);
+    dy1s = sign(dy1);
+    dy2s = sign(dy2);
+    m1 = dx1s * dy2s;
+    m2 = dx2s * dy1s;
+    // we avoid the 64 bit multiplies if we can based on sign checks.
+    if (dy2 < 0)
+    {
+      if (m1 > m2)
+      {
+        outside = !outside;
+      }
+      else if (m1 < m2)
+      {
+        continue;
+      }
+      else if (dx1 * (int64_t)dy2 > dx2 * (int64_t)dy1)
+      {
+        outside = !outside;
+      }
+    }
+    else
+    {
+      if (m1 < m2)
+      {
+        outside = !outside;
+      }
+      else if (m1 > m2)
+      {
+        continue;
+      }
+      else if (dx1 * (int64_t)dy2 < dx2 * (int64_t)dy1)
+      {
+        outside = !outside;
+      }
+    }
+  }
+  return outside;
 }
 
 /*
@@ -85,7 +99,7 @@ bool Polygon_outside(const Vector2l &P, const Vector2l *V, unsigned n)
  *  and the first point is the same as the last point. That is the
  *  minimum requirement for the Polygon_outside function to work
  */
-bool Polygon_complete(const Vector2l *V, unsigned n)
+bool Polygon_complete(const Vector2l* V, unsigned n)
 {
-    return (n >= 4 && V[n-1].x == V[0].x && V[n-1].y == V[0].y);
+  return (n >= 4 && V[n - 1].x == V[0].x && V[n - 1].y == V[0].y);
 }

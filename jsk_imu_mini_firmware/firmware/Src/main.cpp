@@ -5,7 +5,7 @@
   ******************************************************************************
   ** This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
-  * USER CODE END. Other portions of this file, whether 
+  * USER CODE END. Other portions of this file, whether
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
@@ -50,7 +50,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 
-
 /* flag for the start about the process in HAL_SYSTICK_Callback  */
 bool start_process_flag_ = false;
 
@@ -75,37 +74,31 @@ static int LEDcounter = 0;
 // update interrupt
 void HAL_SYSTICK_Callback(void)
 {
-	static uint32_t last_time = HAL_GetTick();
-	uint32_t now_time = HAL_GetTick();
+  static uint32_t last_time = HAL_GetTick();
+  uint32_t now_time = HAL_GetTick();
 
+  /* ros spin func, mainly subscribing  data from ROS network */
+  nh_.spinOnce();
 
-	/* ros spin func, mainly subscribing  data from ROS network */
-	nh_.spinOnce();
-
-	if(!start_process_flag_)
-		return;
-	/* please check whether connection between ros and mcu is build */
-	if(nh_.connected())
-	{
-		/* publish message */
-			/* state estimate */
-		if(counter++>8)
-		{
-			counter = 0;
-			imu_.update();
-			attitude_estimator_.update();
-
-		}
-	}
-
-
-
+  if (!start_process_flag_)
+    return;
+  /* please check whether connection between ros and mcu is build */
+  if (nh_.connected())
+  {
+    /* publish message */
+    /* state estimate */
+    if (counter++ > 8)
+    {
+      counter = 0;
+      imu_.update();
+      attitude_estimator_.update();
+    }
+  }
 }
 /* USER CODE END 0 */
 
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -132,23 +125,22 @@ int main(void)
   MX_USART1_UART_Init();
   MX_SPI1_Init();
   MX_ADC1_Init();
-  //MX_IWDG_Init();
+  // MX_IWDG_Init();
 
   /* USER CODE BEGIN 2 */
   /**********************************/
   {
-	  nh_.initNode(&huart1);
-	  /* ugv ros node */
-	  testnode = new RosNode(&nh_);
-	  /* Sensors */
-	  imu_.init(&hspi1, &nh_);
-	  /* State Estimation */
-	  attitude_estimator_.init(&imu_, &nh_);  // imu  => att
+    nh_.initNode(&huart1);
+    /* ugv ros node */
+    testnode = new RosNode(&nh_);
+    /* Sensors */
+    imu_.init(&hspi1, &nh_);
+    /* State Estimation */
+    attitude_estimator_.init(&imu_, &nh_);  // imu  => att
 
-	  /* all process can start right now! */
-	  start_process_flag_ = true;
-	 // HAL_IWDG_Init(&hiwdg);
-
+    /* all process can start right now! */
+    start_process_flag_ = true;
+    // HAL_IWDG_Init(&hiwdg);
   }
   /* USER CODE END 2 */
   uint16_t ADC_value[4];
@@ -157,71 +149,69 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-  /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-  /* USER CODE BEGIN 3 */
-	  if(start_process_flag_){
-		  if(LEDcounter >= 10){
-			  HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-			  LEDcounter = 0;
-		  }
-		  LEDcounter++;
-	  }
-	  HAL_Delay(9);
-	  //uint8_t c[5]={1,2,3,4,5};
+    /* USER CODE BEGIN 3 */
+    if (start_process_flag_)
+    {
+      if (LEDcounter >= 10)
+      {
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        LEDcounter = 0;
+      }
+      LEDcounter++;
+    }
+    HAL_Delay(9);
+    // uint8_t c[5]={1,2,3,4,5};
 
-	  HAL_ADC_Start(&hadc1);
-	  for(int i=0; i<4; i++){
-		  HAL_ADC_PollForConversion(&hadc1, 1);
-		  ADC_value[i] = HAL_ADC_GetValue(&hadc1);
-	  }
-	  testnode->publish(ADC_value);
-	  HAL_ADC_Stop(&hadc1);
+    HAL_ADC_Start(&hadc1);
+    for (int i = 0; i < 4; i++)
+    {
+      HAL_ADC_PollForConversion(&hadc1, 1);
+      ADC_value[i] = HAL_ADC_GetValue(&hadc1);
+    }
+    testnode->publish(ADC_value);
+    HAL_ADC_Stop(&hadc1);
 
-		  //imu_.update();
-	 // HAL_IWDG_Refresh(&hiwdg);
-
+    // imu_.update();
+    // HAL_IWDG_Refresh(&hiwdg);
   }
   /* USER CODE END 3 */
-
 }
 
 /** System Clock Configuration
 */
 void SystemClock_Config(void)
 {
-
   RCC_OscInitTypeDef RCC_OscInitStruct;
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
 
-    /**Configure the main internal regulator output voltage 
-    */
+  /**Configure the main internal regulator output voltage
+  */
   __HAL_RCC_PWR_CLK_ENABLE();
 
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-    /**Initializes the CPU, AHB and APB busses clocks 
-    */
-   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
-   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-   RCC_OscInitStruct.PLL.PLLM = 4;
-   RCC_OscInitStruct.PLL.PLLN = 100;
-   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-   RCC_OscInitStruct.PLL.PLLQ = 4;
-   RCC_OscInitStruct.PLL.PLLR = 2;
-   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-   {
-     _Error_Handler(__FILE__, __LINE__);
-   }
+  /**Initializes the CPU, AHB and APB busses clocks
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI | RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 100;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLR = 2;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
 
-
-    /**Initializes the CPU, AHB and APB busses clocks 
-    */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  /**Initializes the CPU, AHB and APB busses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
@@ -232,12 +222,12 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-    /**Configure the Systick interrupt time 
-    */
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+  /**Configure the Systick interrupt time
+  */
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
 
-    /**Configure the Systick 
-    */
+  /**Configure the Systick
+  */
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
@@ -253,14 +243,14 @@ void SystemClock_Config(void)
   * @param  None
   * @retval None
   */
-void _Error_Handler(char * file, int line)
+void _Error_Handler(char* file, int line)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  while(1) 
+  while (1)
   {
   }
-  /* USER CODE END Error_Handler_Debug */ 
+  /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef USE_FULL_ASSERT
@@ -278,17 +268,16 @@ void assert_failed(uint8_t* file, uint32_t line)
   /* User can add his own implementation to report the file name and line number,
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
-
 }
 
 #endif
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-*/ 
+*/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

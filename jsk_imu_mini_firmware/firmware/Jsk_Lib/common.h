@@ -15,8 +15,8 @@
 #include "attitude_estimator/attitude_estimator.h"
 
 /* ros related */
-ros::NodeHandle  nh_;
-static RosNode *testnode;
+ros::NodeHandle nh_;
+static RosNode* testnode;
 
 /* sensors */
 IMU imu_;
