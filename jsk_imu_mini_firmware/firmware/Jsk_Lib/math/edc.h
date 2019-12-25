@@ -23,6 +23,6 @@
 
 #include <inttypes.h>
 
-uint16_t crc16_ccitt(const uint8_t *buf, uint32_t len, uint16_t crc);
+uint16_t crc16_ccitt(const uint8_t* buf, uint32_t len, uint16_t crc);
 
 #endif

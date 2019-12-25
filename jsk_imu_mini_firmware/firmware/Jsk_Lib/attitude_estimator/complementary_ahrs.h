@@ -8,7 +8,6 @@
 #error "Please define __cplusplus, because this is a c++ based file "
 #endif
 
-
 #ifndef __COMPLEMENTARY_AHRS_H
 #define __COMPLEMENTARY_AHRS_H
 
@@ -16,11 +15,11 @@
 
 #define GYR_CMPF_FACTOR 60
 #define GYR_CMPFM_FACTOR 25
-#define INV_GYR_CMPF_FACTOR   (1.0f / (GYR_CMPF_FACTOR  + 1.0f))
-#define INV_GYR_CMPFM_FACTOR  (1.0f / (GYR_CMPFM_FACTOR + 1.0f))
-#define PRESCLAER_ACC 3 // if value=1, it means same rate with gyro, for genral attitude estimation
+#define INV_GYR_CMPF_FACTOR (1.0f / (GYR_CMPF_FACTOR + 1.0f))
+#define INV_GYR_CMPFM_FACTOR (1.0f / (GYR_CMPFM_FACTOR + 1.0f))
+#define PRESCLAER_ACC 3  // if value=1, it means same rate with gyro, for genral attitude estimation
 //* the gyro integaral attitude estiamtion amplification rate
-#define GYRO_AMP  1.1395f  //if value= 1, it means normal complementrary filter
+#define GYRO_AMP 1.1395f  // if value= 1, it means normal complementrary filter
 
 #define G_MIN 72
 #define G_MAX 133
@@ -37,12 +36,10 @@ typedef union {
 } t_fp_vector;
 */
 
-class ComplementaryAHRS: public EstimatorAlgorithm
+class ComplementaryAHRS : public EstimatorAlgorithm
 {
 public:
-  ComplementaryAHRS():EstimatorAlgorithm(),
-                      est_g_v_(),  est_m_v_(),
-                       est_g_b_(), est_m_b_()
+  ComplementaryAHRS() : EstimatorAlgorithm(), est_g_v_(), est_m_v_(), est_g_b_(), est_m_b_()
   {
     /*
     arm_mat_init_f32(&est_g_v_, 3, 1, (float32_t *)EstGv_.A);
@@ -52,10 +49,9 @@ public:
     */
   }
 
-
 private:
-  Vector3f est_g_v_,  est_m_v_;
-  Vector3f est_g_b_,  est_m_b_;
+  Vector3f est_g_v_, est_m_v_;
+  Vector3f est_g_b_, est_m_b_;
 
   // t_fp_vector EstGb_ ,EstMb_;
   // t_fp_vector EstGv_, EstMv_;
@@ -70,12 +66,12 @@ private:
   */
 
   /* core esitmation process, using body frame */
-  virtual void estimation() 
+  virtual void estimation()
   {
-    int  valid_acc = 0;
+    int valid_acc = 0;
     static int cnt = 0;
 
- #if 0 //old
+#if 0  // old
  uint8_t axis;
       float acc_magnitude = 0;
       float* delta_gyro_angle[3];
@@ -87,28 +83,27 @@ private:
 
       rotateV(&EstGb_.V,delta_gyro_angle);
       rotateV(&EstMb_.V,delta_gyro_angle);
- #endif
+#endif
 
-    float acc_magnitude = acc_b_ * acc_b_; //norm?
+    float acc_magnitude = acc_b_ * acc_b_;  // norm?
     Vector3f est_g_b_tmp = est_g_b_;
     Vector3f est_m_b_tmp = est_m_b_;
-    est_g_b_ += (est_g_b_tmp % (gyro_b_  * (DELTA_T * GYRO_AMP) )); //rotation by gyro
-    est_m_b_ += (est_m_b_tmp % (gyro_b_  * (DELTA_T * GYRO_AMP) )); //rotation by gyro
+    est_g_b_ += (est_g_b_tmp % (gyro_b_ * (DELTA_T * GYRO_AMP)));  // rotation by gyro
+    est_m_b_ += (est_m_b_tmp % (gyro_b_ * (DELTA_T * GYRO_AMP)));  // rotation by gyro
 
+    if (G_MIN < acc_magnitude && acc_magnitude < G_MAX)
+      valid_acc = 1;
+    else
+      valid_acc = 0;
 
+//*********************************************************************
+//** Apply complimentary filter (Gyro drift correction)
+//** If accel magnitude >1.15G or <0.85G and ACC vector outside of the limit range
+//**    => we neutralize the effect of accelerometers in the angle estimation.
+//** To do that, we just skip filter, as EstV already rotated by Gyro
+//*********************************************************************
 
-    if( G_MIN < acc_magnitude && acc_magnitude < G_MAX) valid_acc = 1;
-    else valid_acc = 0;
-
-     //*********************************************************************
-     //** Apply complimentary filter (Gyro drift correction) 
-     //** If accel magnitude >1.15G or <0.85G and ACC vector outside of the limit range 
-     //**    => we neutralize the effect of accelerometers in the angle estimation. 
-     //** To do that, we just skip filter, as EstV already rotated by Gyro 
-     //*********************************************************************
-
-
-#if 0 //old
+#if 0  // old
     for (axis = 0; axis < 3; axis++) {
       if ( valid_acc == 1 && cnt == 0)
         {
@@ -131,13 +126,12 @@ private:
                       EstMv_.V.x * invG * sqGY_sqGZ  - (EstMv_.V.y * EstGv_.V.y + EstMv_.V.z * EstGv_.V.z) * invG * EstGv_.V.x ) ;//+ MAG_DECLINIATION;
 #endif
 
-
     est_g_b_tmp = est_g_b_;
     est_m_b_tmp = est_m_b_;
 
-    if ( valid_acc == 1 && cnt == 0)
+    if (valid_acc == 1 && cnt == 0)
       est_g_b_ = (est_g_b_tmp * GYR_CMPF_FACTOR + acc_b_) * INV_GYR_CMPF_FACTOR;
-    est_m_b_ = (est_m_b_tmp * GYR_CMPFM_FACTOR  + mag_b_) * INV_GYR_CMPFM_FACTOR;
+    est_m_b_ = (est_m_b_tmp * GYR_CMPFM_FACTOR + mag_b_) * INV_GYR_CMPFM_FACTOR;
 
     est_g_v_ = r_ * est_g_b_;
     est_m_v_ = r_ * est_m_b_;
@@ -147,20 +141,21 @@ private:
     float sq_g_y_sq_g_z = est_g_v_.y * est_g_v_.y + est_g_v_.z * est_g_v_.z;
     float invG = inv_sqrt(sq_g_x_sq_g_z + est_g_v_.y * est_g_v_.y);
 
-    rpy_.x = atan2f(est_g_v_.y , est_g_v_.z);
-    rpy_.y = atan2f(-est_g_v_.x , inv_sqrt(sq_g_y_sq_g_z)* sq_g_y_sq_g_z);
-    rpy_.z = atan2f( est_m_v_.z * est_g_v_.y - est_m_v_.y * est_g_v_.z,
-                      est_m_v_.x * invG * sq_g_y_sq_g_z  - (est_m_v_.y * est_g_v_.y + est_m_v_.z * est_g_v_.z) * invG * est_g_v_.x ) ;//+ MAG_DECLINIATION;
-     //********************************************************************************:
-     //** refrence1: https://sites.google.com/site/myimuestimationexperience/sensors/magnetometer
-     //** refrence2: http://uav.xenocross.net/hdg.html
-     //********************************************************************************
+    rpy_.x = atan2f(est_g_v_.y, est_g_v_.z);
+    rpy_.y = atan2f(-est_g_v_.x, inv_sqrt(sq_g_y_sq_g_z) * sq_g_y_sq_g_z);
+    rpy_.z = atan2f(est_m_v_.z * est_g_v_.y - est_m_v_.y * est_g_v_.z,
+                    est_m_v_.x * invG * sq_g_y_sq_g_z -
+                        (est_m_v_.y * est_g_v_.y + est_m_v_.z * est_g_v_.z) * invG * est_g_v_.x);  //+ MAG_DECLINIATION;
+    //********************************************************************************:
+    //** refrence1: https://sites.google.com/site/myimuestimationexperience/sensors/magnetometer
+    //** refrence2: http://uav.xenocross.net/hdg.html
+    //********************************************************************************
     /* update */
-    if(valid_acc) cnt++;
-    if(cnt == PRESCLAER_ACC) cnt = 0;
+    if (valid_acc)
+      cnt++;
+    if (cnt == PRESCLAER_ACC)
+      cnt = 0;
   }
-
 };
-
 
 #endif

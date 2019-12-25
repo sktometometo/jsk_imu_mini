@@ -6,16 +6,19 @@
 // returned.
 float safe_asin(float v)
 {
-    if (isnan(v)) {
-        return 0.0f;
-    }
-    if (v >= 1.0f) {
-        return M_PI/2;
-    }
-    if (v <= -1.0f) {
-        return -M_PI/2;
-    }
-    return asinf(v);
+  if (isnan(v))
+  {
+    return 0.0f;
+  }
+  if (v >= 1.0f)
+  {
+    return M_PI / 2;
+  }
+  if (v <= -1.0f)
+  {
+    return -M_PI / 2;
+  }
+  return asinf(v);
 }
 
 // a varient of sqrt() that checks the input ranges and ensures a
@@ -25,11 +28,12 @@ float safe_asin(float v)
 // real input should have been zero
 float safe_sqrt(float v)
 {
-    float ret = sqrtf(v);
-    if (isnan(ret)) {
-        return 0;
-    }
-    return ret;
+  float ret = sqrtf(v);
+  if (isnan(ret))
+  {
+    return 0;
+  }
+  return ret;
 }
 
 /* fast inv sqrt(added by bakui) */
@@ -38,9 +42,8 @@ float inv_sqrt(float x)
   float halfx = 0.5f * x;
   float y = x;
   long i = *(long*)&y;
-  i = 0x5f3759df - (i>>1);
+  i = 0x5f3759df - (i >> 1);
   y = *(float*)&i;
   y = y * (1.5f - (halfx * y * y));
   return y;
 }
-
