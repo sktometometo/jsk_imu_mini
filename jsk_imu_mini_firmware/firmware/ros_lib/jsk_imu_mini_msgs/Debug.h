@@ -1,5 +1,5 @@
-#ifndef _ROS_aerial_robot_msgs_MotorValue_h
-#define _ROS_aerial_robot_msgs_MotorValue_h
+#ifndef _ROS_jsk_imu_mini_msgs_Debug_h
+#define _ROS_jsk_imu_mini_msgs_Debug_h
 
 #include <stdint.h>
 #include <string.h>
@@ -7,18 +7,20 @@
 #include "ros/msg.h"
 #include "ros/time.h"
 
-namespace aerial_robot_msgs
+namespace jsk_imu_mini_msgs
 {
 
-  class MotorValue : public ros::Msg
+  class Debug : public ros::Msg
   {
     public:
-      ros::Time stamp;
-      uint16_t motor_value[4];
+      typedef ros::Time _stamp_type;
+      _stamp_type stamp;
+      typedef const char* _data_type;
+      _data_type data;
 
-    MotorValue():
+    Debug():
       stamp(),
-      motor_value()
+      data("")
     {
     }
 
@@ -35,11 +37,11 @@ namespace aerial_robot_msgs
       *(outbuffer + offset + 2) = (this->stamp.nsec >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (this->stamp.nsec >> (8 * 3)) & 0xFF;
       offset += sizeof(this->stamp.nsec);
-      for( uint8_t i = 0; i < 4; i++){
-      *(outbuffer + offset + 0) = (this->motor_value[i] >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->motor_value[i] >> (8 * 1)) & 0xFF;
-      offset += sizeof(this->motor_value[i]);
-      }
+      uint32_t length_data = strlen(this->data);
+      varToArr(outbuffer + offset, length_data);
+      offset += 4;
+      memcpy(outbuffer + offset, this->data, length_data);
+      offset += length_data;
       return offset;
     }
 
@@ -56,16 +58,20 @@ namespace aerial_robot_msgs
       this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
       this->stamp.nsec |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       offset += sizeof(this->stamp.nsec);
-      for( uint8_t i = 0; i < 4; i++){
-      this->motor_value[i] =  ((uint16_t) (*(inbuffer + offset)));
-      this->motor_value[i] |= ((uint16_t) (*(inbuffer + offset + 1))) << (8 * 1);
-      offset += sizeof(this->motor_value[i]);
+      uint32_t length_data;
+      arrToVar(length_data, (inbuffer + offset));
+      offset += 4;
+      for(unsigned int k= offset; k< offset+length_data; ++k){
+          inbuffer[k-1]=inbuffer[k];
       }
+      inbuffer[offset+length_data-1]=0;
+      this->data = (char *)(inbuffer + offset-1);
+      offset += length_data;
      return offset;
     }
 
-    const char * getType(){ return "aerial_robot_msgs/MotorValue"; };
-    const char * getMD5(){ return "5c4af9155735ba99a8c8ef2a8ab819fd"; };
+    const char * getType(){ return "jsk_imu_mini_msgs/Debug"; };
+    const char * getMD5(){ return "37670eed6af64f24a40b9b9fc1cb861e"; };
 
   };
 

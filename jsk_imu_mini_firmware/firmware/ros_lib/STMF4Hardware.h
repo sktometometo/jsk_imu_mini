@@ -134,7 +134,7 @@ public:
   {
     if(!available()) return -1;
 
-    uint8_t r_data;
+    uint8_t r_data = 0;
     ring_buf_->pop(r_data);
     return  r_data;
   }
