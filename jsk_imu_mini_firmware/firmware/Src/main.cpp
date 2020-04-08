@@ -74,9 +74,6 @@ static int LEDcounter = 0;
 // update interrupt
 void HAL_SYSTICK_Callback(void)
 {
-  static uint32_t last_time = HAL_GetTick();
-  uint32_t now_time = HAL_GetTick();
-
   /* ros spin func, mainly subscribing  data from ROS network */
   nh_.spinOnce();
 

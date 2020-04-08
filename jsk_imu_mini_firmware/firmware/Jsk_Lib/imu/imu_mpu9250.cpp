@@ -20,20 +20,32 @@ void IMU::init(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
 {
   reset_calib_flag_ = 0;
 
+  SPI_connection_flag_ = true;
+
   acc_.zero();
   gyro_.zero();
   mag_.zero();
   nh_ = nh;
 
-  imu_config_sub_ = new ros::Subscriber2<std_msgs::UInt8, IMU>("/imu_config_cmd", &IMU::imuConfigCallback, this);
-  nh_->subscribe<std_msgs::UInt8, IMU>(*imu_config_sub_);
+  imu_config_server_ = new ros::ServiceServer<jsk_imu_mini_msgs::ImuConfigRequest,jsk_imu_mini_msgs::ImuConfigResponse,IMU>("/imu_config_cmd", &IMU::imuConfigCallback, this);
+  nh_->advertiseService(*imu_config_server_);
+  imu_debug_pub_ = new ros::Publisher("debug", &imu_debug_msg_);
+  nh_->advertise(*imu_debug_pub_);
 
   ahb_suspend_flag_ = false;
   mag_filtering_flag_ = true;
   mag_outlier_counter_ = 0;
 
   hspi_ = hspi;
-  readCalibData();
+  HAL_Delay(100);
+  bool ret = readCalibData();
+  if ( ! ret ) {
+      acc_offset_.zero();
+      gyro_offset_.zero();
+      mag_offset_.zero();
+      writeCalibData();
+      nh_->loginfo("all offset values are set to 0");
+  }
   gyroInit();
   accInit();
   magInit();
@@ -41,6 +53,10 @@ void IMU::init(SPI_HandleTypeDef* hspi, ros::NodeHandle* nh)
   /* change to 13.5Mhz for polling sensor data from acc, gyro and mag */
   hspi_->Instance->CR1 &= (uint32_t)(~SPI_BAUDRATEPRESCALER_256);  // reset
   hspi_->Instance->CR1 |= (uint32_t)(SPI_BAUDRATEPRESCALER_8);     // 8 = 13.5Mhz
+
+  //
+  debugPrint("init done");
+  nh_->loginfo("init done");
 }
 
 uint16_t IMU::update(uint16_t queue_size)
@@ -72,7 +88,7 @@ bool IMU::getCalibrated()
     return false;
 }
 
-void IMU::readCalibData()
+bool IMU::readCalibData()
 {
   HAL_StatusTypeDef status = HAL_ERROR;
 
@@ -88,16 +104,38 @@ void IMU::readCalibData()
     }
     /* If the program operation is completed, disable the PG Bit */
     FLASH->CR &= (~FLASH_CR_PG);
+  } else {
+    debugPrint("falsh timeout");
+    return false;
   }
+
+  if ( acc_offset_[0] != acc_offset_[0] || acc_offset_[1] != acc_offset_[1] || acc_offset_[2] != acc_offset_[2] )
+  {
+      debugPrint("internal acc_offset_ includes NaN values.");
+      return false;
+  }
+  if ( gyro_offset_[0] != gyro_offset_[0] || gyro_offset_[1] != gyro_offset_[1] || gyro_offset_[2] != gyro_offset_[2] )
+  {
+      debugPrint("internal gyro_offset_ includes NaN values.");
+      return false;
+  }
+  if ( mag_offset_[0] != mag_offset_[0] || mag_offset_[1] != mag_offset_[1] || mag_offset_[2] != mag_offset_[2] )
+  {
+      debugPrint("internal mag_offset_ includes NaN values.");
+      return false;
+  }
+  return true;
 }
 
-void IMU::writeCalibData()
+bool IMU::writeCalibData()
 {
   HAL_StatusTypeDef r;
 
   r = HAL_FLASH_Unlock();
-  if (r != HAL_OK)
-    return;
+  if (r != HAL_OK) {
+    debugPrint("Flash access failed.");
+    return false;
+  }
 
   FLASH_EraseInitTypeDef EraseInitStruct;
   uint32_t SectorError = 0;
@@ -107,8 +145,10 @@ void IMU::writeCalibData()
   EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
 
   r = HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError);
-  if (r != HAL_OK)
-    return;
+  if (r != HAL_OK) {
+    debugPrint("Flash erase failed.");
+    return false;
+  }
 
   for (int i = 0; i < 3; i++)
   {
@@ -121,6 +161,8 @@ void IMU::writeCalibData()
   }
 
   r = HAL_FLASH_Lock();
+
+  return true;
 }
 
 void IMU::mpuWrite(uint8_t address, uint8_t value)
@@ -133,12 +175,18 @@ void IMU::mpuWrite(uint8_t address, uint8_t value)
 
 uint8_t IMU::mpuRead(uint8_t address)
 {
+  HAL_StatusTypeDef r;
   uint8_t t_data[1] = { 0 };
   t_data[0] = address | 0x80;
   uint8_t temp;
   IMU_SPI_CS_L;
   HAL_SPI_Transmit(hspi_, t_data, 1, 1000);
-  HAL_SPI_Receive(hspi_, &temp, 1, 1000);
+  r = HAL_SPI_Receive(hspi_, &temp, 1, 1000);
+  if ( r == HAL_OK ) {
+    SPI_connection_flag_ = true;
+  } else {
+    SPI_connection_flag_ = false;
+  }
   IMU_SPI_CS_H;
   return temp;
 }
@@ -160,8 +208,7 @@ void IMU::gyroInit(void)
   HAL_Delay(10);                  // very importnat! between gyro and acc
 
   // calib in the first time
-  calibrate_gyro_ = 10;  // CALIBRATING_STEP;
-  // calibrate_gyro_ = 0;
+  calibrate_gyro_ = 0;
 
   raw_gyro_p_.zero();
 }
@@ -223,8 +270,9 @@ void IMU::magInit(void)
   calibrate_mag_ = 0;
 }
 
-void IMU::read()
+bool IMU::read()
 {
+  HAL_StatusTypeDef r;
   static int i = 0;
   uint8_t adc_gyro[6];
   uint8_t adc_acc[6];
@@ -235,7 +283,13 @@ void IMU::read()
 
   IMU_SPI_CS_L;
   HAL_SPI_Transmit(hspi_, t_data, 1, 1000);
-  HAL_SPI_Receive(hspi_, adc_gyro, 6, 1000);
+  r = HAL_SPI_Receive(hspi_, adc_gyro, 6, 1000);
+  if ( r == HAL_OK ) {
+    SPI_connection_flag_ = true;
+  } else {
+    SPI_connection_flag_ = false;
+    return false;
+  }
   IMU_SPI_CS_H;
 
   /* we need add some delay between each sensor reading */
@@ -246,7 +300,13 @@ void IMU::read()
   t_data[0] = 0x3B | 0x80;
   IMU_SPI_CS_L;
   HAL_SPI_Transmit(hspi_, t_data, 1, 1000);
-  HAL_SPI_Receive(hspi_, adc_acc, 6, 1000);
+  r = HAL_SPI_Receive(hspi_, adc_acc, 6, 1000);
+  if ( r == HAL_OK ) {
+    SPI_connection_flag_ = true;
+  } else {
+    SPI_connection_flag_ = false;
+    false;
+  }
   IMU_SPI_CS_H;
 
   /* we need add some delay between each sensor reading */
@@ -262,7 +322,13 @@ void IMU::read()
     t_data[0] = 0x49 | 0x80;
     IMU_SPI_CS_L;
     HAL_SPI_Transmit(hspi_, t_data, 1, 1000);
-    HAL_SPI_Receive(hspi_, adc_mag, 7, 1000);
+    r = HAL_SPI_Receive(hspi_, adc_mag, 7, 1000);
+    if ( r == HAL_OK ) {
+      SPI_connection_flag_ = true;
+    } else {
+      SPI_connection_flag_ = false;
+      return false;
+    }
     IMU_SPI_CS_H;
 
     hspi_->Instance->CR1 &= (uint32_t)(~SPI_BAUDRATEPRESCALER_256);  // reset
@@ -277,6 +343,8 @@ void IMU::read()
     i = 0;
   else
     i++;
+
+  return true;
 }
 
 void IMU::process(void)
@@ -296,10 +364,7 @@ void IMU::process(void)
   }
   else
   {
-    raw_gyro_ = raw_gyro_adc_ - gyro_offset_;
-    raw_gyro_p_ -= (raw_gyro_p_ / GYRO_LPF_FACTOR);
-    raw_gyro_p_ += raw_gyro_;
-    gyro_ = (raw_gyro_p_ / GYRO_LPF_FACTOR);
+    gyro_ = raw_gyro_adc_ - gyro_offset_;
   }
 
   /* acc part */
@@ -324,9 +389,6 @@ void IMU::process(void)
   }
   else
   {
-    raw_acc_ = raw_acc_adc_ - acc_offset_;
-    raw_acc_p_ -= (raw_acc_p_ / ACC_LPF_FACTOR);
-    raw_acc_p_ += raw_acc_;
     acc_ = (raw_acc_p_ / ACC_LPF_FACTOR);
   }
 
@@ -352,19 +414,20 @@ void IMU::process(void)
     if (calibrate_mag_ == 1)
     {
       mag_offset_ = (mag_min_ + mag_max_) / 2;
-
-      writeCalibData();
     }
     calibrate_mag_--;
   }
   else
   {
     /* transform coordinate */
+    /*
     raw_mag_[0] = raw_mag_adc_[1] - mag_offset_[1];
     raw_mag_[1] = raw_mag_adc_[0] - mag_offset_[0];
     raw_mag_[2] = -(raw_mag_adc_[2] - mag_offset_[2]);
+    */
 
     /* filtering => because the magnetemeter generates too much outlier, not know the reason */
+    /*
     if (mag_filtering_flag_)
     {
       bool mag_outlier_flag = false;
@@ -396,24 +459,53 @@ void IMU::process(void)
         mag_filtering_flag_ = true;
       }
     }
+    */
+    mag_[0] = raw_mag_adc_[1] - mag_offset_[1];
+    mag_[1] = raw_mag_adc_[0] - mag_offset_[0];
+    mag_[2] = -(raw_mag_adc_[2] - mag_offset_[2]);
+  }
+
+  if ( ! SPI_connection_flag_ ) {
+    debugPrint("SPI connection is not valid.");
   }
 }
 
-void IMU::imuConfigCallback(const std_msgs::UInt8& config_msg)
+void IMU::imuConfigCallback(const jsk_imu_mini_msgs::ImuConfigRequest& req, jsk_imu_mini_msgs::ImuConfigResponse& res)
 {
-  switch (config_msg.data)
+  switch (req.data)
   {
     case RESET_CALIB_CMD:
+      debugPrint("RESET_CALIB_CMD recieved. All offset values are set to 0.");
       acc_offset_.zero();
+      gyro_offset_.zero();
       mag_offset_.zero();
-      // writeCalibData(); //no need?
       break;
     case MPU_ACC_GYRO_CALIB_CMD:
+      debugPrint("MPU_ACC_GYRO_CALIB_CMD recieved. Acc and Gyro will be calibrated.");
       calibrate_gyro_ = CALIBRATING_STEP;
       calibrate_acc_ = CALIBRATING_STEP;
       break;
     case MPU_MAG_CALIB_CMD:
+      debugPrint("MPU_MAG_CALIB_CMD recieved. Mag will be calibrated.");
       calibrate_mag_ = CALIBRATING_MAG_STEP;
       break;
+    case MPU_CALIB_LOAD_CMD:
+      debugPrint("MPU_CALIB_LOAD_CMD recieved.");
+      readCalibData();
+      break;
+    case MPU_CALIB_SAVE_CMD:
+      debugPrint("MPU_CALIB_SAVE_CMD recieved.");
+      writeCalibData();
+      break;
+    default:
+      debugPrint("Unknown command recieved.");
+      break;
   }
+}
+
+void IMU::debugPrint(const char* message)
+{
+    imu_debug_msg_.stamp = nh_->now();
+    imu_debug_msg_.data = message;
+    imu_debug_pub_->publish(&imu_debug_msg_);
 }

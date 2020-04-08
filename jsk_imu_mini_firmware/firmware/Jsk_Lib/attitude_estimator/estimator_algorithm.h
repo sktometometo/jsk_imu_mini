@@ -21,18 +21,17 @@ class EstimatorAlgorithm
 {
 public:
   EstimatorAlgorithm()
-    : acc_b_()
-    , acc_v_()
-    , gyro_b_()
-    , gyro_v_()
-    , mag_b_()
-    , mag_v_()
-    , q_()
+    : acc_bodyframe_()
+    , acc_virtualframe_()
+    , gyro_bodyframe_()
+    , gyro_virtualframe_()
+    , mag_bodyframe_()
+    , mag_virtualframe_()
+    , state_quaternion_()
     , desire_attitude_roll_(0)
     , desire_attitude_pitch_(0)
-    , abs_rel_(ABSOLUTE_COORD)
   {
-    r_.identity();
+    rotation_virtualframe_.identity();
     ;
   };
 
@@ -46,20 +45,20 @@ public:
     desire_attitude_roll_ = desire_attitude_roll;
     desire_attitude_pitch_ = desire_attitude_pitch;
 
-    r_.from_euler(desire_attitude_roll_, desire_attitude_pitch_, 0);
+    rotation_virtualframe_.from_euler(desire_attitude_roll_, desire_attitude_pitch_, 0);
   }
 
   void update(const Vector3f& gyro, const Vector3f& acc, const Vector3f& mag)
   {
     /* the sensor data in body frame */
-    acc_b_ = acc;
-    gyro_b_ = gyro;
-    mag_b_ = mag;
+    acc_bodyframe_ = acc;
+    gyro_bodyframe_ = gyro;
+    mag_bodyframe_ = mag;
 
     /* the sensor data in virtual frame */
-    acc_v_ = r_ * acc_b_;
-    gyro_v_ = r_ * gyro_b_;
-    mag_v_ = r_ * mag_b_;
+    acc_virtualframe_ = rotation_virtualframe_ * acc_bodyframe_;
+    gyro_virtualframe_ = rotation_virtualframe_ * gyro_bodyframe_;
+    mag_virtualframe_ = rotation_virtualframe_ * mag_bodyframe_;
 
     estimation();
   }
@@ -72,52 +71,59 @@ public:
   static const uint8_t Y = 1;
   static const uint8_t Z = 2;
 
+  Quaternion getQuaternion()
+  {
+      return state_quaternion_;
+  }
+
   Vector3f getAngles()
   {
-    return rpy_;
+    return state_rpy_;
   }
   Vector3f getVels()
   {
-    return gyro_v_;
+    return gyro_virtualframe_;
   }  // should be the virtual frame
 
   Vector3f getAccB()
   {
-    return acc_b_;
+    return acc_bodyframe_;
   }
   Vector3f getGyroB()
   {
-    return gyro_b_;
+    return gyro_bodyframe_;
   }
   Vector3f getMagB()
   {
-    return mag_b_;
+    return mag_bodyframe_;
   }
 
   Vector3f getAccV()
   {
-    return acc_v_;
+    return acc_virtualframe_;
   }
   Vector3f getGyroV()
   {
-    return gyro_v_;
+    return gyro_virtualframe_;
   }
   Vector3f getMagV()
   {
-    return mag_v_;
+    return mag_virtualframe_;
   }
 
 protected:
-  Vector3f acc_b_, acc_v_;
-  Vector3f gyro_b_, gyro_v_;
-  Vector3f mag_b_, mag_v_;
+  /* Imu values */
+  Vector3f acc_bodyframe_, acc_virtualframe_;
+  Vector3f gyro_bodyframe_, gyro_virtualframe_;
+  Vector3f mag_bodyframe_, mag_virtualframe_;
 
-  Matrix3f r_;
-  Vector3f rpy_;
-  Quaternion q_;  // TODO => change to AP_Math
+  Matrix3f rotation_virtualframe_;
+
+  /* Estimated State */
+  Vector3f state_rpy_;
+  Quaternion state_quaternion_;  // TODO => change to AP_Math
 
   float desire_attitude_roll_, desire_attitude_pitch_;
-  uint8_t abs_rel_;
   uint8_t update_desire_attitude_;
 };
 

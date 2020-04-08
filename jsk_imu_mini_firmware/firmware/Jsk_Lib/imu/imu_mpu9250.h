@@ -26,6 +26,8 @@
 /* ros */
 #include <ros.h>
 #include <std_msgs/UInt8.h>
+#include <jsk_imu_mini_msgs/Debug.h>
+#include <jsk_imu_mini_msgs/ImuConfig.h>
 
 #define IMU_SPI_CS_H HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET)
 #define IMU_SPI_CS_L HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET)
@@ -92,6 +94,8 @@ public:
   static const uint8_t RESET_CALIB_CMD = 0x00;
   static const uint8_t MPU_ACC_GYRO_CALIB_CMD = 0x01;
   static const uint8_t MPU_MAG_CALIB_CMD = 0x02;
+  static const uint8_t MPU_CALIB_LOAD_CMD = 0x03;
+  static const uint8_t MPU_CALIB_SAVE_CMD = 0x04;
 
   Vector3f getAcc()
   {
@@ -116,7 +120,9 @@ private:
   SPI_HandleTypeDef* hspi_;
 
   ros::NodeHandle* nh_;
-  ros::Subscriber2<std_msgs::UInt8, IMU>* imu_config_sub_;
+  ros::ServiceServer<jsk_imu_mini_msgs::ImuConfigRequest,jsk_imu_mini_msgs::ImuConfigResponse,IMU>* imu_config_server_;
+  ros::Publisher* imu_debug_pub_;
+  jsk_imu_mini_msgs::Debug imu_debug_msg_;
 
   uint8_t acc_gyro_calib_flag_;
   uint8_t mag_calib_flag_;
@@ -147,19 +153,23 @@ private:
 
   bool ahb_suspend_flag_;  // to avoid the confliction between SPI1 and USART1(ros)
 
+  bool SPI_connection_flag_;
+
   void gyroInit(void);
   void accInit(void);
   void magInit(void);
 
-  void read(void);
+  bool read(void);
   void process(void);
 
   void mpuWrite(uint8_t address, uint8_t value);
   uint8_t mpuRead(uint8_t address);
 
-  void readCalibData(void);
-  void writeCalibData(void);
+  bool readCalibData(void);
+  bool writeCalibData(void);
 
-  void imuConfigCallback(const std_msgs::UInt8& config_msg);
+  void imuConfigCallback(const jsk_imu_mini_msgs::ImuConfigRequest& req, jsk_imu_mini_msgs::ImuConfigResponse& res);
+
+  void debugPrint(const char* message);
 };
 #endif

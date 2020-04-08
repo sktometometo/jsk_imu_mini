@@ -85,11 +85,11 @@ private:
       rotateV(&EstMb_.V,delta_gyro_angle);
 #endif
 
-    float acc_magnitude = acc_b_ * acc_b_;  // norm?
+    float acc_magnitude = acc_bodyframe_ * acc_bodyframe_;  // norm?
     Vector3f est_g_b_tmp = est_g_b_;
     Vector3f est_m_b_tmp = est_m_b_;
-    est_g_b_ += (est_g_b_tmp % (gyro_b_ * (DELTA_T * GYRO_AMP)));  // rotation by gyro
-    est_m_b_ += (est_m_b_tmp % (gyro_b_ * (DELTA_T * GYRO_AMP)));  // rotation by gyro
+    est_g_b_ += (est_g_b_tmp % (gyro_bodyframe_ * (DELTA_T * GYRO_AMP)));  // rotation by gyro
+    est_m_b_ += (est_m_b_tmp % (gyro_bodyframe_ * (DELTA_T * GYRO_AMP)));  // rotation by gyro
 
     if (G_MIN < acc_magnitude && acc_magnitude < G_MAX)
       valid_acc = 1;
@@ -130,22 +130,23 @@ private:
     est_m_b_tmp = est_m_b_;
 
     if (valid_acc == 1 && cnt == 0)
-      est_g_b_ = (est_g_b_tmp * GYR_CMPF_FACTOR + acc_b_) * INV_GYR_CMPF_FACTOR;
-    est_m_b_ = (est_m_b_tmp * GYR_CMPFM_FACTOR + mag_b_) * INV_GYR_CMPFM_FACTOR;
+      est_g_b_ = (est_g_b_tmp * GYR_CMPF_FACTOR + acc_bodyframe_) * INV_GYR_CMPF_FACTOR;
+    est_m_b_ = (est_m_b_tmp * GYR_CMPFM_FACTOR + mag_bodyframe_) * INV_GYR_CMPFM_FACTOR;
 
-    est_g_v_ = r_ * est_g_b_;
-    est_m_v_ = r_ * est_m_b_;
+    est_g_v_ = rotation_virtualframe_ * est_g_b_;
+    est_m_v_ = rotation_virtualframe_ * est_m_b_;
 
     // Attitude of the estimated vector
     float sq_g_x_sq_g_z = est_g_v_.x * est_g_v_.x + est_g_v_.z * est_g_v_.z;
     float sq_g_y_sq_g_z = est_g_v_.y * est_g_v_.y + est_g_v_.z * est_g_v_.z;
     float invG = inv_sqrt(sq_g_x_sq_g_z + est_g_v_.y * est_g_v_.y);
 
-    rpy_.x = atan2f(est_g_v_.y, est_g_v_.z);
-    rpy_.y = atan2f(-est_g_v_.x, inv_sqrt(sq_g_y_sq_g_z) * sq_g_y_sq_g_z);
-    rpy_.z = atan2f(est_m_v_.z * est_g_v_.y - est_m_v_.y * est_g_v_.z,
+    state_rpy_.x = atan2f(est_g_v_.y, est_g_v_.z);
+    state_rpy_.y = atan2f(-est_g_v_.x, inv_sqrt(sq_g_y_sq_g_z) * sq_g_y_sq_g_z);
+    state_rpy_.z = atan2f(est_m_v_.z * est_g_v_.y - est_m_v_.y * est_g_v_.z,
                     est_m_v_.x * invG * sq_g_y_sq_g_z -
                         (est_m_v_.y * est_g_v_.y + est_m_v_.z * est_g_v_.z) * invG * est_g_v_.x);  //+ MAG_DECLINIATION;
+    state_quaternion_.from_euler( state_rpy_.x, state_rpy_.y, state_rpy_.z );
     //********************************************************************************:
     //** refrence1: https://sites.google.com/site/myimuestimationexperience/sensors/magnetometer
     //** refrence2: http://uav.xenocross.net/hdg.html

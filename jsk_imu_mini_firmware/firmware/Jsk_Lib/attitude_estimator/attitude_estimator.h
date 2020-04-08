@@ -36,7 +36,7 @@
 #define MADWICK 2
 
 /* please change the algorithm type according to your application */
-#define ESTIMATE_TYPE COMPLEMENTARY
+#define ESTIMATE_TYPE MADWICK
 
 class AttitudeEstimator
 {
@@ -60,9 +60,9 @@ public:
     imu_pub_ = new ros::Publisher("imu", &imu_msg_);
     nh_->advertise(*imu_pub_);
 
-    desire_coord_sub_ = new ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>(
+    desire_coord_sub_ = new ros::Subscriber<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>(
         "/desire_coordinate", &AttitudeEstimator::desireCoordCallback, this);
-    nh_->subscribe<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>(*desire_coord_sub_);
+    nh_->subscribe<ros::Subscriber<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>>(*desire_coord_sub_);
 
     imu_ = imu;
 
@@ -105,17 +105,15 @@ public:
       imu_msg_.stamp = nh_->now();
       for (int i = 0; i < 3; i++)
       {
-#if 0  // virtual coord
-            imu_msg_.gyro_data[i] = estimator_->getGyroV()[i];
-            imu_msg_.mag_data[i] = estimator_->getMagV()[i];
-            imu_msg_.acc_data[i] = estimator_->getAccV()[i];
-#else  // raw data
         imu_msg_.gyro_data[i] = imu_->getGyro()[i];
         imu_msg_.mag_data[i] = imu_->getMag()[i];
         imu_msg_.acc_data[i] = imu_->getAcc()[i];
-#endif
-        imu_msg_.angles[i] = estimator_->getAngles()[i];
       }
+
+      imu_msg_.orientation.x = estimator_->getQuaternion()[1];
+      imu_msg_.orientation.y = estimator_->getQuaternion()[2];
+      imu_msg_.orientation.z = estimator_->getQuaternion()[3];
+      imu_msg_.orientation.w = estimator_->getQuaternion()[0];
 
       imu_pub_->publish(&imu_msg_);
     }
@@ -132,13 +130,18 @@ public:
     return estimator_->getVels();
   }
 
+  inline const Quaternion getQuaternion()
+  {
+      return estimator_->getQuaternion();
+  }
+
   static const uint8_t PUB_INTERVAL = 2;
 
   // private:
   ros::NodeHandle* nh_;
   ros::Publisher* imu_pub_;
   jsk_imu_mini_msgs::Imu imu_msg_;
-  ros::Subscriber2<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>* desire_coord_sub_;
+  ros::Subscriber<jsk_imu_mini_msgs::DesireCoord, AttitudeEstimator>* desire_coord_sub_;
 
   EstimatorAlgorithm* estimator_;
   IMU* imu_;
