@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIRECTORY_MAIN=$(rospack find jsk_imu_mini_firmware)
+DIRECTORY_MAIN=$(rospack find jsk_imu_mini_firmware)/firmware
 DIRECTORY_ROS_LIB=$DIRECTORY_MAIN/ros_lib/
 DIRECTORY_TEMP=$DIRECTORY_MAIN/temp/
 
