@@ -2,34 +2,63 @@
 This circuit can publish IMU data and 4 ADC channel data.
 
 ## Requirements
+
+* Ubuntu bionic + ROS melodic
 * rosserial_client
 * rosserial_server
-* openocd
-* STLink-Driver
-* GCC ARM Toolchain
+* [GCC ARM Toolchain](https://launchpad.net/~team-gcc-arm-embedded/+archive/ubuntu/ppa)
+* [STM32 Cube Programmer](https://www.st.com/ja/development-tools/stm32cubeprog.html)
 
-## Usage
+Please uninstall gcc-arm-none-eabi if you already install it.
+
 ```
-# build jsk_imu_mini_msgs and generate ros libraries for stm
-$ catkin build jsk_imu_mini_firmware
-$ source ~/catkin_ws/devel/setup.bash
-$ rosrun jsk_imu_mini_firmware refresh_roslib.sh
+$ sudo apt-get remove gcc-arm-none-eabi
+```
+
+Please install GNU Arm embedded toolchain
+
+```
+$ sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
+$ sudo apt update
+$ sudo apt install gcc-arm-embedded
+```
+
+And Please install STM32 Cube Programmer and set PATH to 
+
+```
+# Install STM32 Cube Programmer
+# and add <STM32 Cube Programmer dir>/bin to executable path
+$ echo "export PATH=PATH:<STM32 Cube Programmer dir>/bin" >> ~/.bashrc
+```
+
+## Build and Burn firmware
 
 
-# build and write firmware via TrueSTUDIO
-## build firmware
-$ roscd jsk_imu_mini_firmware
+### build firmware
+
+```
+$ roscd jsk_imu_mini_firmware/firmware
 $ make
-## connect with openocd
-$ cd <openocd directory>
-$ openocd -f interface/stlink-v2.cfg -f target/stm32f4x.cfg
-## open another terminal
-$ roscd jsk_imu_mini_firmware
-$ telnet localhost 4444
-> reset halt
-> flash write_image erase ./build/jsk_imu_mini.elf
+```
 
+### Burn firmware
 
+```
+$ roscd jsk_imu_mini_firmware/firmware
+$ STM32_Programmer_CLI -c port=SWD -d ./build/jsk_imu_mini.bin 0x8000000 -s
+```
+
+### Regenerate ros_lib
+
+refresh ros_lib if necessary
+
+```
+$ rosrun jsk_imu_mini_firmware refresh_roslib.sh
+```
+
+## How to use a
+
+```
 # connect via rosserial and publish messages
 $ rosrun rosserial_server serial_node _baud:=921600 _port:=<serial port>
 
