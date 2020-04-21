@@ -10,7 +10,6 @@
 #include <jsk_imu_mini_msgs/Potentio.h>
 /* inlcude ros related class */
 //#include <examples/class.h>
-#include <sensors/encoder/encoder.h>
 #include <sensors/imu/imu_mpu9250.h>
 #include <vector>
 //define the duty

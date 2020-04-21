@@ -152,7 +152,7 @@ int main(void)
 #if IMU_FLAG
 	  imu_.init(&hspi1, &nh_);
 	  /* State Estimation */
-	  estimator_.init(&imu_, NULL, NULL, &nh_);  // imu  => att
+	  estimator_.init(&imu_, &nh_);  // imu  => att
 #endif
 
 	  /* all process can start right now! */

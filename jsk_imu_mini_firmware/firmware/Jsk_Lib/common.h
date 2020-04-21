@@ -11,16 +11,7 @@
 /* configurations of sensors */
 #include "config.h"
 //for sensors
-//#include <sensors/encoder/encoder.h>
-//#if IMU_FLAG
 #include "sensors/imu/imu_mpu9250.h"
-//#endif
-#if BARO_FLAG
-#include "sensors/baro/baro_ms5611.h"
-#endif
-#if GPS_FLAG
-#include "sensors/gps/gps_ublox.h"
-#endif
 /* State Estimate, including attitude, altitude and pos */
 #if ATTITUDE_ESTIMATE_FLAG || HEIGHT_ESTIMATE_FLAG || POS_ESTIMATE_FLAG
 #include "state_estimate/state_estimate.h"
@@ -36,17 +27,7 @@ ros::NodeHandle  nh_;
 static RosNode *testnode;
 
 /* sensors */
-#if IMU_FLAG
 IMU imu_;
-#endif
-//
-#if BARO_FLAG
-Baro baro_;
-#endif
-//
-#if GPS_FLAG
-GPS gps_;
-#endif
 //
 #if ATTITUDE_ESTIMATE_FLAG || HEIGHT_ESTIMATE_FLAG || POS_ESTIMATE_FLAG
 StateEstimate estimator_;
