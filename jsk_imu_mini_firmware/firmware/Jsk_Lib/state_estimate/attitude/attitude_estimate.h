@@ -13,7 +13,6 @@
 #define __ATTITUDE_ESTIMATE_H
 
 #include "stm32f4xx_hal.h"
-#include "config.h"
 /* #include "arm_math.h" */
 #include <math/AP_Math.h>
 

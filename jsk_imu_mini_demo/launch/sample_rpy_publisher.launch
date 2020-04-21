@@ -7,7 +7,6 @@
         <param name="baud" value="921600" />
         <param name="port" value="$(arg devport)" />
     </node>
-    <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
 
     <node pkg="jsk_imu_mini_demo" type="sample_rpy_publisher" name="sample_rpy_publisher" output="screen"
         args="/imu $(arg frame_id)" />
